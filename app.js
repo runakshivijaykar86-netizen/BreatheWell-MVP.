@@ -59,14 +59,46 @@ function updateUI(data) {
 // --- 3. EVENT LISTENERS ---
 
 // GPS Button
-document.getElementById('checkBtn').addEventListener('click', () => {
+// --- Updated GPS Button Logic ---
+document.getElementById('checkBtn').addEventListener('click', async function() {
+    const resultDiv = document.getElementById('result');
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<p>🔍 Getting your location...</p>';
+    
     if (navigator.geolocation) {
-        document.getElementById('result').innerHTML = "🔍 Getting location...";
-        navigator.geolocation.getCurrentPosition(position => {
-            const { latitude, longitude } = position.coords;
-            fetch(`https://api.airvisual.com/v2/nearest_city?lat=${latitude}&lon=${longitude}&key=${API_KEY}`)
-                .then(res => res.json())
-                .then(data => updateUI(data));
+        navigator.geolocation.getCurrentPosition(async function(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            
+            resultDiv.innerHTML = '<p>📍 Location found! Fetching AQI data...</p>';
+            
+            try {
+                const response = await fetch(`https://api.airvisual.com/v2/nearest_city?lat=${lat}&lon=${lon}&key=${API_KEY}`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // 1. Run the UI update you already have
+                    updateUI(data); 
+                    
+                    // 2. Trigger the AI Prediction specifically
+                    const aqi = data.data.current.pollution.aqius;
+                    const city = data.data.city;
+                    const aiText = document.getElementById('ai-prediction');
+                    
+                    aiText.innerText = "🤖 Azure AI is analyzing air patterns...";
+                    
+                    // Call the AI function we wrote earlier
+                    const prediction = await getAIPrediction(aqi, city);
+                    aiText.innerText = prediction;
+                    
+                } else {
+                    resultDiv.innerHTML = '<p>❌ Could not fetch data. Try again!</p>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<p>❌ Error connecting to services.</p>';
+            }
+        }, function(error) {
+            resultDiv.innerHTML = '<p>❌ Please allow location access to continue.</p>';
         });
     }
 });
@@ -113,3 +145,4 @@ async function updateUI(data) {
     const prediction = await getAIPrediction(aqi, city);
     aiText.innerText = prediction;
 }
+
