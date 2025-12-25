@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQI Health App</title><link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BreatheWell">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="container">
+    <div class="app-header">
+        <div class="app-logo">🌍</div>
+        <h1>BreatheWell</h1>
+        <p class="subtitle">Real-time Air Quality & Health Insights</p>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="cityInput" placeholder="Enter City (e.g. Delhi, London)">
+        <button id="searchBtn">Search City</button>
+    </div>
+
+    <div class="divider"><span>OR</span></div>
+
+    <button id="checkBtn">📍 Use My Current Location</button>
+    
+    <div id="result"></div>
+</div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
