@@ -50,3 +50,27 @@ document.getElementById('checkBtn').addEventListener('click', function() {
         { timeout: 10000 }
     );
 });
+
+document.getElementById('searchBtn').addEventListener('click', async function() {
+    const city = document.getElementById('cityInput').value;
+    const resultDiv = document.getElementById('result');
+    if(!city) return alert("Type a city name!");
+
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = `<p>🔍 Searching for ${city}...</p>`;
+
+    try {
+        // We use a general search for India cities as a fallback
+        const url = `https://api.airvisual.com/v2/city?city=${city}&state=Delhi&country=India&key=${API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if(data.status === "success") {
+            updateUI(data);
+        } else {
+            resultDiv.innerHTML = `<p>❌ City not found. Try "Delhi" or "Mumbai".</p>`;
+        }
+    } catch (e) {
+        resultDiv.innerHTML = '<p>❌ Search failed.</p>';
+    }
+});
