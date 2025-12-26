@@ -43,7 +43,7 @@ jobs:
           action: "upload"
           app_location: "/"          # Root of your repo
           api_location: "api"        # Folder containing your backend
-          output_location: "."       # Matches app_location for skip_app_build
+          output_location: "/"       # Matches app_location for skip_app_build
           skip_app_build: true        # Mandatory for plain HTML project
           github_id_token: ${{ steps.idtoken.outputs.result }} # Required for OIDC
 
@@ -57,4 +57,5 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: "close"
+
 
