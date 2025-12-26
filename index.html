@@ -90,7 +90,7 @@
 
             try {
                 // This calls the backend API that talks to SQL
-                const response = await fetch('/api/addUser', {
+                const response = await fetch('/api', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email })
@@ -112,3 +112,4 @@
     </script>
 </body>
 </html>
+
