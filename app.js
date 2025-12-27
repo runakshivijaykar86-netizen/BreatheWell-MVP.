@@ -1,68 +1,86 @@
-// --- 1. CONFIGURATION ---
+// --- CONFIGURATION ---
 const API_KEY = '1a450bf9-a323-48d1-bceb-9f57d1bc63a7';
-console.log("BreatheWell System Online - Backend Connected");
+console.log("BreatheWell System Online - V4 Global");
 
-// --- 2. UI UPDATER: DRAWS THE DATA ON SCREEN ---
+// --- UI UPDATER: SMART DASHBOARD ---
 function updateUI(data) {
     const resultDiv = document.getElementById('result');
-    if (!resultDiv) return;
-
     const aqi = data.data.current.pollution.aqius;
     const city = data.data.city;
+    const temp = data.data.current.weather.tp;
+    const humidity = data.data.current.weather.hu;
+
+    // Determine Health Status and Colors
+    let color = "#38a169"; // Green
+    let status = "GOOD";
+    let advice = "Great day for outdoor activities!";
+
+    if (aqi > 50) { color = "#d69e2e"; status = "MODERATE"; advice = "Sensitive groups should reduce outdoor exercise."; }
+    if (aqi > 100) { color = "#e53e3e"; status = "UNHEALTHY"; advice = "Wear a mask. Avoid prolonged outdoor exertion."; }
+    if (aqi > 200) { color = "#805ad5"; status = "VERY UNHEALTHY"; advice = "Stay indoors. Keep windows closed."; }
 
     resultDiv.style.display = 'block';
     resultDiv.innerHTML = `
-        <div style="border: 2px solid #0078d4; padding: 25px; border-radius: 20px; text-align: center; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-            <h3 style="color: #4a5568;">📍 ${city}</h3>
-            <h1 style="font-size: 70px; margin: 10px 0; color: ${aqi > 100 ? '#e53e3e' : '#38a169'};">${aqi}</h1>
-            <p style="font-weight: bold; color: #718096;">US AQI INDEX</p>
-            <div style="margin-top: 15px; padding: 10px; border-radius: 10px; background: ${aqi > 100 ? '#fff5f5' : '#f0fff4'};">
-                <p style="color: ${aqi > 100 ? '#c53030' : '#2f855a'}; font-weight: bold;">
-                    Status: ${aqi > 100 ? '🔴 Unhealthy' : '🟢 Healthy'}
-                </p>
+        <div style="border-top: 8px solid ${color}; padding: 20px; border-radius: 12px; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+            <p style="color: #718096; font-size: 14px; text-align: center;">CURRENT LOCATION</p>
+            <h3 style="text-align: center; font-size: 24px; color: #2d3748; margin-bottom: 15px;">📍 ${city}</h3>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <div style="display: inline-block; background: ${color}; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-bottom: 10px;">
+                    ${status}
+                </div>
+                <h1 style="font-size: 72px; color: #2d3748; line-height: 1;">${aqi}</h1>
+                <p style="color: #a0aec0; letter-spacing: 2px; font-size: 14px;">US AQI</p>
+            </div>
+
+            <div style="display: flex; justify-content: space-around; border-top: 1px solid #edf2f7; padding-top: 15px; margin-top: 15px;">
+                <div style="text-align:center;">
+                    <p style="color: #718096; font-size: 12px;">TEMP</p>
+                    <p style="font-weight: bold;">${temp}°C</p>
+                </div>
+                <div style="text-align:center;">
+                    <p style="color: #718096; font-size: 12px;">HUMIDITY</p>
+                    <p style="font-weight: bold;">${humidity}%</p>
+                </div>
+            </div>
+
+            <div style="background: #f7fafc; padding: 12px; border-radius: 8px; margin-top: 15px;">
+                <p style="font-size: 13px; color: #4a5568; line-height: 1.4;"><strong>Health Advice:</strong> ${advice}</p>
             </div>
         </div>
     `;
 }
 
-// --- 3. SEARCH BY CITY (No more 405 error) ---
+// --- SEARCH EVENT (GLOBAL REDIRECT) ---
 document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault(); // This is the secret to stopping the 405 error
-    
-    const cityInput = document.getElementById('cityInput');
+    e.preventDefault();
+    const city = document.getElementById('cityInput').value.trim();
     const resultDiv = document.getElementById('result');
-    const city = cityInput.value.trim();
-
-    if(!city) return alert("Please type a city!");
-
-    resultDiv.style.display = 'block';
-    resultDiv.innerHTML = "<p style='text-align:center;'>🔍 Fetching from AirVisual Backend...</p>";
+    
+    resultDiv.innerHTML = "<p class='loading'>🔍 Searching Global Air Database...</p>";
 
     try {
-        // We use the specific city data from the AirVisual API
-        const url = `https://api.airvisual.com/v2/city?city=${encodeURIComponent(city)}&state=Delhi&country=India&key=${API_KEY}`;
+        // This URL attempts to find the city in India specifically. 
+        // For truly world-wide search, you would eventually need a state/country dropdown.
+        const url = `https://api.airvisual.com/v2/city?city=${encodeURIComponent(city)}&state=${encodeURIComponent(city)}&country=India&key=${API_KEY}`;
         const response = await fetch(url);
-        
-        if (!response.ok) throw new Error(`Server Error: ${response.status}`);
-
         const data = await response.json();
+
         if(data.status === "success") {
             updateUI(data);
         } else {
-            resultDiv.innerHTML = `<p style="color:red; text-align:center;">❌ Error: ${data.data.message}. Try 'Delhi'.</p>`;
+            resultDiv.innerHTML = `<p style="color:red; text-align:center;">❌ Could not find data for "${city}" in India. Try 'Delhi' or 'Mumbai'.</p>`;
         }
     } catch (err) {
-        console.error("Connection Failed:", err);
-        resultDiv.innerHTML = "<p style='color:red; text-align:center;'>❌ Connection Failed. Ensure Ad-blockers are OFF.</p>";
+        resultDiv.innerHTML = "<p style='color:red; text-align:center;'>❌ Connection failed. Check your internet.</p>";
     }
 });
 
-// --- 4. GPS LOCATION ---
+// --- GPS EVENT ---
 document.getElementById('checkBtn')?.addEventListener('click', () => {
     const resultDiv = document.getElementById('result');
-    resultDiv.style.display = 'block';
-    resultDiv.innerHTML = "<p style='text-align:center;'>🛰️ Syncing with GPS Backend...</p>";
-
+    resultDiv.innerHTML = "<p class='loading'>🛰️ Fetching local data from Backend...</p>";
+    
     navigator.geolocation.getCurrentPosition(async (pos) => {
         try {
             const url = `https://api.airvisual.com/v2/nearest_city?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&key=${API_KEY}`;
@@ -73,6 +91,6 @@ document.getElementById('checkBtn')?.addEventListener('click', () => {
             resultDiv.innerHTML = "<p style='color:red; text-align:center;'>❌ Connection Failed.</p>";
         }
     }, (err) => {
-        resultDiv.innerHTML = "<p style='color:red; text-align:center;'>❌ GPS Denied.</p>";
+        resultDiv.innerHTML = "<p style='color:red; text-align:center;'>❌ GPS Access Denied.</p>";
     });
 });
