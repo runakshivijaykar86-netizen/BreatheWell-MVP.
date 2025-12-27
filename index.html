@@ -3,51 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BreatheWell Pro | Global Health Advisor</title>
+    <title>BreatheWell Pro | Global Health Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background-color: #f0f4f8; color: #1a202c; line-height: 1.6; }
-        .navbar { background: #0078d4; color: white; padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .container { max-width: 600px; margin: 30px auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        h2 { text-align: center; margin-bottom: 20px; color: #2d3748; }
         
+        /* Navbar */
+        .navbar { background: #0078d4; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        /* Container */
+        .container { max-width: 650px; margin: 30px auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        h2 { text-align: center; margin-bottom: 20px; color: #2d3748; }
+
+        /* Quick Select Buttons */
+        .quick-links { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 25px; justify-content: center; }
+        .btn-link { background: #edf2f7; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 13px; color: #4a5568; transition: 0.3s; }
+        .btn-link:hover { background: #0078d4; color: white; }
+
         /* Form Styling */
         .search-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
         input { padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 15px; width: 100%; }
-        input:focus { border-color: #0078d4; outline: none; }
+        .btn-search { background: #0078d4; color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        .btn-search:hover { background: #005a9e; }
         
-        .btn-search { background: #0078d4; color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
-        .btn-gps { background: #edf2f7; color: #4a5568; border: none; padding: 10px; border-radius: 8px; cursor: pointer; margin-top: 10px; width: 100%; font-size: 14px; }
-        
-        /* Result & Medical Advisory */
+        .btn-gps { background: #2d3748; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-top: 10px; width: 100%; font-size: 14px; }
+
+        /* Result Area */
         #result { margin-top: 25px; }
-        .med-card { border-radius: 12px; padding: 20px; border-left: 8px solid; margin-bottom: 20px; }
-        
+        .med-card { border-radius: 12px; padding: 25px; border-left: 10px solid; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .health-item { margin-top: 15px; }
+        .health-label { font-weight: bold; font-size: 14px; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+
         /* Share Button */
-        .btn-share { display: none; background: #25D366; color: white; text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 15px; }
+        .btn-share { display: none; background: #25D366; color: white; text-align: center; padding: 14px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 15px; }
         
-        .chart-container { height: 220px; margin-top: 25px; }
+        .chart-container { height: 250px; margin-top: 30px; }
     </style>
 </head>
 <body>
 
-    <nav class="navbar"><h3>BreatheWell</h3></nav>
+    <nav class="navbar"><h3>BreatheWell Intelligence</h3></nav>
 
     <div class="container">
-        <h2>Global Health Intelligence</h2>
+        <h2>Global Health Assessment</h2>
+
+        <div class="quick-links">
+            <button class="btn-link" onclick="quickSearch('Delhi', 'Delhi', 'India')">🇮🇳 Delhi</button>
+            <button class="btn-link" onclick="quickSearch('Mumbai', 'Maharashtra', 'India')">🇮🇳 Mumbai</button>
+            <button class="btn-link" onclick="quickSearch('London', 'England', 'United Kingdom')">🇬🇧 London</button>
+            <button class="btn-link" onclick="quickSearch('New York City', 'New York', 'USA')">🇺🇸 New York</button>
+            <button class="btn-link" onclick="quickSearch('Tokyo', 'Tokyo', 'Japan')">🇯🇵 Tokyo</button>
+        </div>
         
         <form id="signup-form" class="search-group">
-            <input type="text" id="cityInput" placeholder="City (e.g., London)" required>
-            <input type="text" id="stateInput" placeholder="State/Region (e.g., England)" required>
-            <input type="text" id="countryInput" placeholder="Country (e.g., UK)" required>
-            <button type="submit" class="btn-search">Analyze Air Quality</button>
+            <input type="text" id="cityInput" placeholder="City (e.g. Paris)" required>
+            <input type="text" id="stateInput" placeholder="State/Region (e.g. Ile-de-France)" required>
+            <input type="text" id="countryInput" placeholder="Country (e.g. France)" required>
+            <button type="submit" class="btn-search">Run Medical Analysis</button>
         </form>
         
-        <button id="checkBtn" class="btn-gps">📍 Use My Location (Global One-Click)</button>
+        <button id="checkBtn" class="btn-gps">📍 One-Click GPS Sync (Every City)</button>
 
         <div id="result"></div>
-        <a id="whatsappBtn" class="btn-share" target="_blank">📲 Share Health Alert on WhatsApp</a>
+        <a id="whatsappBtn" class="btn-share" target="_blank">📲 Share Medical Alert on WhatsApp</a>
 
         <div class="chart-container">
             <canvas id="aqiChart"></canvas>
