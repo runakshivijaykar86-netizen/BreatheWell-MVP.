@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BreatheWell Pro | Health Intelligence</title>
+    <title>BreatheWell Pro | Global Health Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,28 +12,38 @@
         .container { max-width: 650px; margin: 20px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
         h2 { text-align: center; margin-bottom: 20px; color: #2d3748; }
         input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
-        .btn-main { width: 100%; background: #0078d4; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
-        .btn-gps { width: 100%; background: #edf2f7; border: none; padding: 10px; border-radius: 8px; cursor: pointer; color: #4a5568; }
+        .btn-main { width: 100%; background: #0078d4; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px; transition: 0.3s; }
+        .btn-main:hover { background: #005a9e; }
+        .btn-gps { width: 100%; background: #edf2f7; border: none; padding: 10px; border-radius: 8px; cursor: pointer; color: #4a5568; margin-bottom: 10px; }
         
         /* Result Styling */
         #result { margin-top: 20px; }
-        .warning-card { border-radius: 10px; padding: 20px; margin-top: 15px; }
-        .health-section { margin-bottom: 15px; }
-        .health-header { font-weight: bold; display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .warning-card { border-radius: 10px; padding: 20px; margin-top: 15px; border-left: 10px solid; }
+        
+        /* WhatsApp Button Style */
+        .btn-whatsapp { 
+            display: none; width: 100%; background: #25D366; color: white; border: none; 
+            padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; 
+            margin-top: 15px; text-align: center; text-decoration: none; font-size: 16px;
+        }
+        .btn-whatsapp:hover { background: #128C7E; }
+
         .chart-box { height: 200px; margin-top: 20px; }
     </style>
 </head>
 <body>
     <nav class="navbar"><h3>BreatheWell</h3></nav>
     <div class="container">
-        <h2>Health Risk Assessment</h2>
+        <h2>Global Health Risk Dashboard</h2>
         <form id="signup-form">
-            <input type="text" id="cityInput" placeholder="Enter City (e.g., Delhi, Mumbai)" required>
-            <button type="submit" class="btn-main">Analyze Health Risks</button>
+            <input type="text" id="cityInput" placeholder="Enter City (e.g., Delhi, London, Mumbai)" required>
+            <button type="submit" class="btn-main">Analyze Health Hazards</button>
         </form>
         <button id="checkBtn" class="btn-gps">📍 Use My GPS Location</button>
         
         <div id="result"></div>
+        <a id="whatsappBtn" class="btn-whatsapp" target="_blank">📲 Share Health Alert on WhatsApp</a>
+        
         <div class="chart-box"><canvas id="aqiChart"></canvas></div>
     </div>
     <script src="app.js"></script>
