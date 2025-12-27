@@ -44,38 +44,50 @@ function updateUI(data) {
 }
 
 // --- 4. SEARCH BY CITY BUTTON ---
-// Added 'async' so 'await' works, and '?' to prevent null error
+// --- 4. SEARCH BY CITY (DEBUG VERSION) ---
 document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault(); // Prevents page reload
+    e.preventDefault(); 
     const city = document.getElementById('cityInput').value;
-    if(!city) return alert("Please type a city!");
-
     const resultDiv = document.getElementById('result');
+    
+    if(!city) return alert("Please type a city!");
+    
     resultDiv.style.display = 'block';
-    resultDiv.innerHTML = "<p style='text-align:center;'>🔍 Fetching Atmospheric Data...</p>";
+    resultDiv.innerHTML = "<p style='text-align:center;'>🔍 Debug: Attempting Connection...</p>";
 
     try {
         const url = `https://api.airvisual.com/v2/city?city=${city}&state=Delhi&country=India&key=${API_KEY}`;
+        
+        // Log the URL to the console for you to verify
+        console.log("Fetching from URL:", url);
+
         const response = await fetch(url);
+        
+        // Check if the server actually sent data back
+        if (!response.ok) {
+            throw new Error(`Server Response Error: ${response.status} ${response.statusText}`);
+        }
+
         const data = await response.json();
 
         if(data.status === "success") {
             updateUI(data);
         } else {
-            resultDiv.innerHTML = `<p style="color:red; text-align:center;">❌ Error: ${data.data.message}. <br>Try searching 'Delhi' or 'Mumbai'.</p>`;
+            resultDiv.innerHTML = `<p style="color:red;">❌ API Logic Error: ${data.data.message}</p>`;
         }
-   } catch (error) {
-        // This will print the exact reason to your browser console (F12)
-        console.error("Detailed Error:", error); 
-        
-        const resultDiv = document.getElementById('result');
-        if (resultDiv) {
-            resultDiv.innerHTML = `
-                <p style='color:red; text-align:center;'>
-                    ❌ Connection failed.<br>
-                    <span style="font-size:12px;">Reason: ${error.message}</span>
-                </p>`;
-        }
+
+    } catch (error) {
+        // THIS PRINTS THE REAL REASON ON YOUR SCREEN
+        console.error("Full Error Object:", error);
+        resultDiv.innerHTML = `
+            <div style="color:red; border:1px solid red; padding:10px; background:#fff0f0;">
+                <h4 style="margin:0;">❌ Connection Failed</h4>
+                <p style="font-size:14px; margin:5px 0;"><strong>Error Type:</strong> ${error.name}</p>
+                <p style="font-size:14px; margin:5px 0;"><strong>Message:</strong> ${error.message}</p>
+                <hr>
+                <p style="font-size:12px;">Check your Ad-blocker or ensure your API key has "Web" permissions.</p>
+            </div>
+        `;
     }
 });
 
@@ -94,5 +106,6 @@ document.getElementById('checkBtn')?.addEventListener('click', () => {
         if (resultDiv) resultDiv.innerHTML = "<p style='color:red; text-align:center;'>❌ GPS Denied. Please use Search above.</p>";
     });
 });
+
 
 
