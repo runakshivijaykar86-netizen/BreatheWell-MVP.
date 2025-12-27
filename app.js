@@ -1,169 +1,88 @@
 const API_KEY = '1a450bf9-a323-48d1-bceb-9f57d1bc63a7';
 let aqiChart;
 
-// --- 1. MEDICAL INTELLIGENCE ENGINE ---
-function getMedicalAdvice(aqi) {
-    if (aqi <= 50) return {
-        status: "Healthy", color: "#38a169", bg: "#f0fff4",
-        now: "Ideal air quality. Normal lung function observed.",
-        future: "Supports maximum lung capacity and cardiovascular tissue health.",
-        precautions: "Perfect for outdoor exercise. Keep indoor air ventilated."
-    };
-    if (aqi <= 100) return {
-        status: "Moderate", color: "#d69e2e", bg: "#fffaf0",
-        now: "Minor respiratory irritation possible for sensitive individuals.",
-        future: "Low long-term risk for most healthy adults.",
-        precautions: "Sensitive groups should monitor symptoms and limit heavy exertion."
-    };
-    if (aqi <= 150) return {
-        status: "Unhealthy (Sensitive)", color: "#ed8936", bg: "#fffaf0",
-        now: "Increased risk of wheezing, coughing, and chest tightness.",
-        future: "Chronic exposure linked to permanent decline in lung function over time.",
-        precautions: "Use N95 masks. Sensitive individuals should remain indoors."
-    };
-    if (aqi <= 200) return {
-        status: "Unhealthy", color: "#e53e3e", bg: "#fff5f5",
-        now: "Generalized airway inflammation. Fatigue and headaches likely.",
-        future: "High risk of developing Chronic Bronchitis and lung scarring.",
-        precautions: "Avoid outdoor exercise. Use air purifiers and seal windows shut."
-    };
-    return {
-        status: "Hazardous", color: "#7e22ce", bg: "#f5f3ff",
-        now: "Emergency heart/lung stress. Severe respiratory distress risk.",
-        future: "Strongly linked to Heart Attack, Stroke, and 5-10 year life expectancy loss.",
-        precautions: "TOTAL ISOLATION: Avoid outdoor air completely. Seal all entry points."
-    };
+// --- 1. THE MEDICAL ENGINE ---
+function getAdvice(aqi) {
+    if (aqi <= 50) return { status: "Healthy", color: "#28a745", now: "Clear air. Normal lung function.", future: "Supports long-term heart health.", precautions: "No precautions needed." };
+    if (aqi <= 100) return { status: "Moderate", color: "#ffc107", now: "Minor throat irritation possible.", future: "Low risk for healthy adults.", precautions: "Sensitive groups limit exertion." };
+    if (aqi <= 150) return { status: "Unhealthy (Sensitive)", color: "#fd7e14", now: "Wheezing/Coughing for asthmatics.", future: "May reduce lung growth in children.", precautions: "Wear N95 masks outdoors." };
+    if (aqi <= 200) return { status: "Unhealthy", color: "#dc3545", now: "Airway inflammation. Fatigue.", future: "High risk of Chronic Bronchitis.", precautions: "Stay indoors. Use air purifiers." };
+    return { status: "Hazardous", color: "#6f42c1", now: "Severe heart/lung stress.", future: "Linked to Strokes and Heart Attacks.", precautions: "EMERGENCY: Seal windows. Do not go out." };
 }
 
-// --- 2. THE GLOBAL FETCH LOGIC ---
-async function fetchGlobalData(city, state, country) {
-    const resultDiv = document.getElementById('result');
-    resultDiv.innerHTML = "<p style='text-align:center;'>🌍 Accessing Global Health Database...</p>";
-    
-    const url = `https://api.airvisual.com/v2/city?city=${encodeURIComponent(city)}&state=${encodeURIComponent(state)}&country=${encodeURIComponent(country)}&key=${API_KEY}`;
-    
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.status === "success") {
-            updateUI(data);
-        } else {
-            resultDiv.innerHTML = `
-                <div style="color:red; text-align:center; padding:15px; border:1px solid red; border-radius:8px; background: #fff5f5;">
-                    ❌ <strong>${data.data.message}</strong><br>
-                    <small>Tip: For global cities, use the full state/region name (e.g. 'Maharashtra' instead of 'MH').</small>
-                </div>`;
-        }
-    } catch (err) {
-        resultDiv.innerHTML = "❌ Connection Failed. Check your internet.";
-    }
-}
-
-// --- 3. UI UPDATER ---
+// --- 2. THE UI UPDATER ---
 function updateUI(data) {
-    const resultDiv = document.getElementById('result');
-    const shareBtn = document.getElementById('whatsappBtn');
+    const resDiv = document.getElementById('result');
+    const waBtn = document.getElementById('whatsappBtn');
     const aqi = data.data.current.pollution.aqius;
     const city = data.data.city;
-    const med = getMedicalAdvice(aqi);
+    const med = getAdvice(aqi);
 
-    resultDiv.innerHTML = `
-        <div class="med-card" style="background: ${med.bg}; border-color: ${med.color};">
-            <h3 style="text-align:center; color: #2d3748;">📍 ${city} | AQI: ${aqi}</h3>
-            <p style="text-align:center; font-weight:bold; color: ${med.color}; margin-bottom:15px; letter-spacing: 1px;">${med.status.toUpperCase()}</p>
-            
-            <div class="health-item">
-                <span class="health-label" style="color: ${med.color};">⚠️ Current Impact</span>
-                <p style="font-size:14px;">${med.now}</p>
-            </div>
-
-            <div class="health-item">
-                <span class="health-label" style="color: ${med.color};">⏳ Future Chronic Risk</span>
-                <p style="font-size:14px;">${med.future}</p>
-            </div>
-
-            <div class="health-item" style="margin-top:20px; padding:12px; background:white; border-radius:8px; border-left: 4px solid ${med.color};">
-                <span class="health-label" style="color: #2d3748;">🛡️ Required Precaution</span>
-                <p style="font-size:14px; font-weight: bold; color: ${med.color};">${med.precautions}</p>
+    resDiv.innerHTML = `
+        <div class="med-card" style="border-color: ${med.color}; background: #fff;">
+            <h3 style="text-align:center;">📍 ${city} | AQI: ${aqi}</h3>
+            <p style="text-align:center; color:${med.color}; font-weight:bold;">${med.status.toUpperCase()}</p>
+            <hr style="margin:15px 0; opacity:0.1;">
+            <div style="font-size:14px;">
+                <span class="warning-label" style="color:${med.color}">🚨 Impact Now</span> <p>${med.now}</p>
+                <br>
+                <span class="warning-label" style="color:${med.color}">⏳ Future Risk</span> <p>${med.future}</p>
+                <br>
+                <div style="padding:10px; background:#f8f9fa; border-left:4px solid ${med.color};">
+                    <strong>🛡️ PRECAUTION:</strong> ${med.precautions}
+                </div>
             </div>
         </div>
     `;
 
-    // WhatsApp Message Logic
-    const msg = `💨 HEALTH ALERT: ${city}\nAQI: ${aqi} (${med.status})\n🚨 Symptoms: ${med.now}\n⏳ Long-term: ${med.future}\n🛡️ Precautions: ${med.precautions}\n\nCheck live: ${window.location.href}`;
-    shareBtn.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-    shareBtn.style.display = "block";
-
-    updateChart(aqi, med.color);
+    waBtn.style.display = "block";
+    waBtn.href = `https://wa.me/?text=${encodeURIComponent(`⚠️ HEALTH ALERT: ${city}\nAQI: ${aqi}\nImpact: ${med.now}\nPrecaution: ${med.precautions}`)}`;
+    
+    drawChart(aqi, med.color);
 }
 
-// --- 4. DATA VISUALIZATION (Chart.js) ---
-function updateChart(aqi, color) {
+// --- 3. SEARCH & GPS LOGIC ---
+async function search(c, s, co) {
+    const resDiv = document.getElementById('result');
+    resDiv.innerHTML = "🔍 Fetching Global Data...";
+    try {
+        const url = `https://api.airvisual.com/v2/city?city=${encodeURIComponent(c)}&state=${encodeURIComponent(s)}&country=${encodeURIComponent(co)}&key=${API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.status === "success") updateUI(data);
+        else resDiv.innerHTML = `<p style="color:red; text-align:center;">❌ ${data.data.message}. Use GPS button for best results.</p>`;
+    } catch (e) { resDiv.innerHTML = "❌ Connection Failed."; }
+}
+
+function quick(c, s, co) {
+    document.getElementById('city').value = c;
+    document.getElementById('state').value = s;
+    document.getElementById('country').value = co;
+    search(c, s, co);
+}
+
+document.getElementById('search-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    search(document.getElementById('city').value, document.getElementById('state').value, document.getElementById('country').value);
+});
+
+document.getElementById('gps-btn').addEventListener('click', () => {
+    document.getElementById('result').innerHTML = "🛰️ Connecting to Global Satellites...";
+    navigator.geolocation.getCurrentPosition(async (p) => {
+        const res = await fetch(`https://api.airvisual.com/v2/nearest_city?lat=${p.coords.latitude}&lon=${p.coords.longitude}&key=${API_KEY}`);
+        const data = await res.json();
+        if (data.status === "success") updateUI(data);
+    });
+});
+
+function drawChart(aqi, color) {
     const ctx = document.getElementById('aqiChart').getContext('2d');
     if (aqiChart) aqiChart.destroy();
     aqiChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Now', '+1h', '+2h', '+3h', '+4h', '+5h'],
-            datasets: [{ label: 'Predicted Trend', data: [aqi, aqi+5, aqi+15, aqi+8, aqi-2, aqi-10], borderColor: color, fill: true, backgroundColor: color + '11', tension: 0.4 }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { display: true }, x: { display: true } } }
-    });
-}
-
-// --- 5. EVENT LISTENERS & SHORTCUTS ---
-function quickSearch(city, state, country) {
-    document.getElementById('cityInput').value = city;
-    document.getElementById('stateInput').value = state;
-    document.getElementById('countryInput').value = country;
-    fetchGlobalData(city, state, country);
-}
-
-document.getElementById('signup-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const city = document.getElementById('cityInput').value.trim();
-    const state = document.getElementById('stateInput').value.trim();
-    const country = document.getElementById('countryInput').value.trim();
-    fetchGlobalData(city, state, country);
-});
-
-document.getElementById('checkBtn').addEventListener('click', () => {
-    document.getElementById('result').innerHTML = "<p style='text-align:center;'>🛰️ Syncing with Global Satellite Data...</p>";
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-        try {
-            const res = await fetch(`https://api.airvisual.com/v2/nearest_city?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&key=${API_KEY}`);
-            const data = await res.json();
-            if (data.status === "success") updateUI(data);
-        } catch (err) { alert("GPS Sync Failed."); }
-    });
-});
-
-// --- 6. LIVE NEWS FEED ENGINE ---
-async function fetchNews() {
-    const newsFeed = document.getElementById('news-feed');
-    // Using a public RSS-to-JSON converter for Google News
-    const topic = 'Air Pollution Health';
-    const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(topic)}&hl=en-IN&gl=IN&ceid=IN:en`;
-    
-    try {
-        // We use an open API to convert RSS to JSON for easy display
-        const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`);
-        const data = await res.json();
-        
-        if (data.status === 'ok') {
-            newsFeed.innerHTML = data.items.slice(0, 5).map(item => `
-                <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9;">
-                    <a href="${item.link}" target="_blank" style="text-decoration: none; color: #0078d4; font-weight: bold; font-size: 14px; display: block; line-height: 1.3;">
-                        ${item.title}
-                    </a>
-                    <small style="color: #a0aec0; font-size: 11px;">${new Date(item.pubDate).toDateString()} • ${item.author || 'Global Health News'}</small>
-                </div>
-            `).join('');
+            labels: ['Now', '+1h', '+2h', '+3h', '+4h'],
+            datasets: [{ label: 'Predicted AQI', data: [aqi, aqi+5, aqi+10, aqi-2, aqi-5], borderColor: color, fill: false, tension: 0.4 }]
         }
-    } catch (err) {
-        newsFeed.innerHTML = "<p style='color: #a0aec0; font-size: 12px;'>Unable to load news at this time.</p>";
-    }
+    });
 }
-
-// Call news fetch on page load
-window.onload = fetchNews;
