@@ -3,12 +3,35 @@ let aqiChart;
 
 // --- 1. MEDICAL INTELLIGENCE ---
 function getAdvice(aqi) {
-    if (aqi <= 50) return { status: "Healthy", color: "#38a169", bg: "#f0fff4", now: "Clear air.", future: "Lung health support.", precautions: "No precautions." };
-    if (aqi <= 100) return { status: "Moderate", color: "#d69e2e", bg: "#fffaf0", now: "Minor irritation.", future: "Low risk.", precautions: "Sensitive groups limit exertion." };
-    if (aqi <= 200) return { status: "Unhealthy", color: "#e53e3e", bg: "#fff5f5", now: "Inflammation.", future: "High Bronchitis risk.", precautions: "Wear N95 masks." };
-    return { status: "HAZARDOUS", color: "#7e22ce", bg: "#f5f3ff", now: "Severe heart/lung stress.", future: "Stroke & Heart Attack risk.", precautions: "STAY INDOORS." };
+    if (aqi <= 50) return { 
+        status: "Healthy", 
+        color: "#38a169", 
+        now: "Optimal oxygen levels. No symptoms.", 
+        future: "Maintains peak lung elasticity.", 
+        precautions: "No mask needed. Great for outdoor cardio." 
+    };
+    if (aqi <= 150) return { 
+        status: "Warning", 
+        color: "#fd7e14", 
+        now: "Throat irritation and wheezing for asthmatics.", 
+        future: "Linked to increased allergy sensitivity.", 
+        precautions: "Sensitive groups should wear N95 masks outdoors." 
+    };
+    if (aqi <= 300) return { 
+        status: "Danger", 
+        color: "#dc3545", 
+        now: "Chest tightness, fatigue, and labored breathing.", 
+        future: "High risk of permanent Chronic Bronchitis.", 
+        precautions: "Avoid outdoors. Use HEPA air purifiers indoors." 
+    };
+    return { 
+        status: "CRITICAL", 
+        color: "#7e22ce", 
+        now: "Severe respiratory distress and heart stress.", 
+        future: "Increased risk of Stroke and Heart Attack.", 
+        precautions: "EMERGENCY: Seal all windows. Do not exercise. Stay indoors." 
+    };
 }
-
 // --- 2. THE UI UPDATER ---
 function updateUI(data) {
     const resDiv = document.getElementById('result');
@@ -91,3 +114,4 @@ function drawChart(aqi, color) {
 function triggerEmergencyAlert() {
     alert("🆘 CRITICAL HEALTH PROTOCOL:\n1. Seal windows with wet towels.\n2. Run air purifiers on max.\n3. Do not engage in any physical exertion.");
 }
+
