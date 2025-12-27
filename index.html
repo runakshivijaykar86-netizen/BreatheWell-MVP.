@@ -3,70 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BreatheWell | Global AQI Tracker</title>
+    <title>BreatheWell Pro | Health Intelligence</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; color: #333; }
-
-        /* Navbar */
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            background-color: #0078d4; padding: 0 2rem; height: 70px; color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .logo { font-size: 24px; letter-spacing: 1px; }
-
-        /* Dashboard Container */
-        .container {
-            max-width: 550px; margin: 40px auto; background: white;
-            padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; color: #1a202c; }
+        .navbar { background: #0078d4; color: white; padding: 15px 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .container { max-width: 650px; margin: 20px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        h2 { text-align: center; margin-bottom: 20px; color: #2d3748; }
+        input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
+        .btn-main { width: 100%; background: #0078d4; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+        .btn-gps { width: 100%; background: #edf2f7; border: none; padding: 10px; border-radius: 8px; cursor: pointer; color: #4a5568; }
         
-        h2 { margin-bottom: 20px; color: #2d3748; text-align: center; }
-        
-        /* Input & Buttons */
-        .search-box { margin-bottom: 25px; }
-        input {
-            width: 100%; padding: 14px; margin: 10px 0;
-            border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; transition: 0.3s;
-        }
-        input:focus { border-color: #0078d4; outline: none; }
-        
-        .btn-primary {
-            width: 100%; background: #0078d4; color: white; border: none;
-            padding: 14px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600;
-        }
-        .btn-primary:hover { background: #005a9e; }
-        
-        .btn-gps {
-            width: 100%; background: #edf2f7; color: #4a5568; border: none;
-            padding: 12px; border-radius: 8px; cursor: pointer; font-size: 14px; margin-top: 10px;
-        }
-
-        /* Result Area */
-        #result { margin-top: 30px; min-height: 100px; }
-        .loading { text-align: center; color: #718096; font-style: italic; }
+        /* Result Styling */
+        #result { margin-top: 20px; }
+        .warning-card { border-radius: 10px; padding: 20px; margin-top: 15px; }
+        .health-section { margin-bottom: 15px; }
+        .health-header { font-weight: bold; display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .chart-box { height: 200px; margin-top: 20px; }
     </style>
 </head>
 <body>
-
-    <nav class="navbar">
-        <div class="logo"><strong>Breathe</strong>Well</div>
-    </nav>
-
+    <nav class="navbar"><h3>BreatheWell</h3></nav>
     <div class="container">
-        <h2>Air Quality Dashboard</h2>
-        
-        <form id="signup-form" class="search-box">
-            <input type="text" id="cityInput" placeholder="Enter City (e.g., Delhi, Mumbai, London)" required>
-            <button type="submit" class="btn-primary">Analyze Air Quality</button>
+        <h2>Health Risk Assessment</h2>
+        <form id="signup-form">
+            <input type="text" id="cityInput" placeholder="Enter City (e.g., Delhi, Mumbai)" required>
+            <button type="submit" class="btn-main">Analyze Health Risks</button>
         </form>
-        
-        <button id="checkBtn" class="btn-gps">📍 Use My Current Location</button>
+        <button id="checkBtn" class="btn-gps">📍 Use My GPS Location</button>
         
         <div id="result"></div>
+        <div class="chart-box"><canvas id="aqiChart"></canvas></div>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>
