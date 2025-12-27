@@ -1,4 +1,4 @@
-// --- 1. CONFIGURATION ---
+console.log("BreatheWell System Online");
 const API_KEY = '1a450bf9-a323-48d1-bceb-9f57d1bc63a7';
 
 // --- 2. LOGIC: FUTURE HEALTH OUTLOOK (The "Brains" of your app) ---
@@ -80,3 +80,4 @@ document.getElementById('checkBtn').addEventListener('click', () => {
         document.getElementById('result').innerHTML = "<p style='color:red; text-align:center;'>❌ GPS Denied. Please use Search above.</p>";
     });
 });
+
