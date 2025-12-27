@@ -64,8 +64,18 @@ document.getElementById('signup-form')?.addEventListener('submit', async (e) => 
         } else {
             resultDiv.innerHTML = `<p style="color:red; text-align:center;">❌ Error: ${data.data.message}. <br>Try searching 'Delhi' or 'Mumbai'.</p>`;
         }
-    } catch (error) {
-        resultDiv.innerHTML = "<p style='color:red; text-align:center;'>❌ Connection failed.</p>";
+   } catch (error) {
+        // This will print the exact reason to your browser console (F12)
+        console.error("Detailed Error:", error); 
+        
+        const resultDiv = document.getElementById('result');
+        if (resultDiv) {
+            resultDiv.innerHTML = `
+                <p style='color:red; text-align:center;'>
+                    ❌ Connection failed.<br>
+                    <span style="font-size:12px;">Reason: ${error.message}</span>
+                </p>`;
+        }
     }
 });
 
@@ -84,4 +94,5 @@ document.getElementById('checkBtn')?.addEventListener('click', () => {
         if (resultDiv) resultDiv.innerHTML = "<p style='color:red; text-align:center;'>❌ GPS Denied. Please use Search above.</p>";
     });
 });
+
 
