@@ -30,21 +30,40 @@
 <body>
     <nav class="navbar">BreatheWell Intelligence</nav>
     <div class="container">
-        <p class="hint">💡 <strong>Tip:</strong> For best results, click the GPS button below!</p>
-        <button id="gps-btn" class="btn-gps">📍 ONE-CLICK GLOBAL GPS SYNC</button>
+    <p class="hint">💡 <strong>Tip:</strong> For best results, click the GPS button below!</p>
+    <button id="gps-btn" class="btn-gps">📍 ONE-CLICK GLOBAL GPS SYNC</button>
 
-        <form id="search-form" class="search-box">
-            <input type="text" id="city" placeholder="City (e.g., Mumbai)" required>
-            <input type="text" id="state" placeholder="State/Region (e.g., Maharashtra)" required>
-            <input type="text" id="country" placeholder="Country (e.g., India)" required>
-            <button type="submit" class="btn-main">Search Global Database</button>
-        </form>
+    <form id="search-form" class="search-box">
+        <input type="text" id="city" placeholder="City (e.g., Mumbai)" required>
+        <input type="text" id="state" placeholder="State/Region (e.g., Maharashtra)" required>
+        <input type="text" id="country" placeholder="Country (e.g., India)" required>
+        <button type="submit" class="btn-main">Search Global Database</button>
+    </form>
 
-        <div id="result"></div>
-        <div id="emergency-zone"><button class="btn-emergency" onclick="triggerEmergencyAlert()">🆘 EMERGENCY PROTOCOL REQUIRED</button></div>
-        <a id="whatsappBtn" class="share-wa" target="_blank">📲 Share Alert on WhatsApp</a>
-        <div class="chart-box"><canvas id="aqiChart"></canvas></div>
+    <div id="result"></div>
+
+    <div id="symptoms-tracker" style="margin-top: 25px; padding: 20px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; display:none;">
+        <h4 style="margin-bottom: 10px; color: #2d3748;">🩺 Personal Symptoms Tracker</h4>
+        <p style="font-size: 12px; color: #718096; margin-bottom: 15px;">Check any symptoms you are currently feeling:</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+            <label><input type="checkbox" class="symptom" value="Coughing"> Dry Cough</label>
+            <label><input type="checkbox" class="symptom" value="Headache"> Headache</label>
+            <label><input type="checkbox" class="symptom" value="Chest Tightness"> Chest Tightness</label>
+            <label><input type="checkbox" class="symptom" value="Eye Irritation"> Eye Irritation</label>
+            <label><input type="checkbox" class="symptom" value="Shortness of Breath"> Short Breath</label>
+            <label><input type="checkbox" class="symptom" value="Dizziness"> Dizziness</label>
+        </div>
+        
+        <button onclick="analyzeSymptoms()" class="btn-main" style="margin-top: 15px; background: #2d3748;">Generate Health Report</button>
+        <div id="personal-report" style="margin-top: 15px; font-size: 13px; line-height: 1.5;"></div>
     </div>
+
+    <div id="emergency-zone"><button class="btn-emergency" onclick="triggerEmergencyAlert()">🆘 EMERGENCY PROTOCOL REQUIRED</button></div>
+    <a id="whatsappBtn" class="share-wa" target="_blank">📲 Share Alert on WhatsApp</a>
+    <div class="chart-box"><canvas id="aqiChart"></canvas></div>
+</div>
     <script src="app.js"></script>
 </body>
 </html>
+
