@@ -44,7 +44,7 @@ function updateUI(data) {
 }
 
 // --- 4. SEARCH BY CITY BUTTON ---
-document.getElementById('searchBtn').addEventListener('click', async () => {
+document.getElementById('YOUR_ELEMENT_ID')?.addEventListener('click', (event) => {
     const city = document.getElementById('cityInput').value;
     if(!city) return alert("Please type a city!");
 
@@ -80,4 +80,5 @@ document.getElementById('checkBtn').addEventListener('click', () => {
         document.getElementById('result').innerHTML = "<p style='color:red; text-align:center;'>❌ GPS Denied. Please use Search above.</p>";
     });
 });
+
 
