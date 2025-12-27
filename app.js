@@ -137,3 +137,33 @@ document.getElementById('checkBtn').addEventListener('click', () => {
         } catch (err) { alert("GPS Sync Failed."); }
     });
 });
+
+// --- 6. LIVE NEWS FEED ENGINE ---
+async function fetchNews() {
+    const newsFeed = document.getElementById('news-feed');
+    // Using a public RSS-to-JSON converter for Google News
+    const topic = 'Air Pollution Health';
+    const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(topic)}&hl=en-IN&gl=IN&ceid=IN:en`;
+    
+    try {
+        // We use an open API to convert RSS to JSON for easy display
+        const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`);
+        const data = await res.json();
+        
+        if (data.status === 'ok') {
+            newsFeed.innerHTML = data.items.slice(0, 5).map(item => `
+                <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9;">
+                    <a href="${item.link}" target="_blank" style="text-decoration: none; color: #0078d4; font-weight: bold; font-size: 14px; display: block; line-height: 1.3;">
+                        ${item.title}
+                    </a>
+                    <small style="color: #a0aec0; font-size: 11px;">${new Date(item.pubDate).toDateString()} • ${item.author || 'Global Health News'}</small>
+                </div>
+            `).join('');
+        }
+    } catch (err) {
+        newsFeed.innerHTML = "<p style='color: #a0aec0; font-size: 12px;'>Unable to load news at this time.</p>";
+    }
+}
+
+// Call news fetch on page load
+window.onload = fetchNews;
