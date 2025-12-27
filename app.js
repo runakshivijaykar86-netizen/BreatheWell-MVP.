@@ -44,7 +44,9 @@ function updateUI(data) {
 }
 
 // --- 4. SEARCH BY CITY BUTTON ---
-document.getElementById('signup-form')?.addEventListener('submit', (e) => {
+// Added 'async' so 'await' works, and '?' to prevent null error
+document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Prevents page reload
     const city = document.getElementById('cityInput').value;
     if(!city) return alert("Please type a city!");
 
@@ -53,7 +55,6 @@ document.getElementById('signup-form')?.addEventListener('submit', (e) => {
     resultDiv.innerHTML = "<p style='text-align:center;'>🔍 Fetching Atmospheric Data...</p>";
 
     try {
-        // We use Delhi/India as a default state/country for testing the India region
         const url = `https://api.airvisual.com/v2/city?city=${city}&state=Delhi&country=India&key=${API_KEY}`;
         const response = await fetch(url);
         const data = await response.json();
@@ -69,17 +70,18 @@ document.getElementById('signup-form')?.addEventListener('submit', (e) => {
 });
 
 // --- 5. GPS LOCATION BUTTON ---
-document.getElementById('checkBtn').addEventListener('click', () => {
-    document.getElementById('result').innerHTML = "<p style='text-align:center;'>🛰️ Requesting GPS...</p>";
+// Added '?' here too because this button might be missing on some pages
+document.getElementById('checkBtn')?.addEventListener('click', () => {
+    const resultDiv = document.getElementById('result');
+    if (resultDiv) resultDiv.innerHTML = "<p style='text-align:center;'>🛰️ Requesting GPS...</p>";
+    
     navigator.geolocation.getCurrentPosition(async (pos) => {
         const url = `https://api.airvisual.com/v2/nearest_city?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&key=${API_KEY}`;
         const res = await fetch(url);
         const data = await res.json();
         if(data.status === "success") updateUI(data);
     }, (err) => {
-        document.getElementById('result').innerHTML = "<p style='color:red; text-align:center;'>❌ GPS Denied. Please use Search above.</p>";
+        if (resultDiv) resultDiv.innerHTML = "<p style='color:red; text-align:center;'>❌ GPS Denied. Please use Search above.</p>";
     });
 });
-
-
 
