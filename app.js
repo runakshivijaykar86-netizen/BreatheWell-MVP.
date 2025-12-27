@@ -1,3 +1,4 @@
+let currentAQIValue = 0; // Top of the file
 const API_KEY = '1a450bf9-a323-48d1-bceb-9f57d1bc63a7';
 let aqiChart;
 
@@ -37,6 +38,10 @@ function updateUI(data) {
     const resDiv = document.getElementById('result');
     const waBtn = document.getElementById('whatsappBtn');
     const emergencyZone = document.getElementById('emergency-zone');
+    
+    currentAQIValue = data.data.current.pollution.aqius; 
+    document.getElementById('symptoms-tracker').style.display = "block"; 
+    
     const aqi = data.data.current.pollution.aqius;
     const city = data.data.city;
     const med = getAdvice(aqi);
@@ -115,3 +120,35 @@ function triggerEmergencyAlert() {
     alert("🆘 CRITICAL HEALTH PROTOCOL:\n1. Seal windows with wet towels.\n2. Run air purifiers on max.\n3. Do not engage in any physical exertion.");
 }
 
+// --- SYMPTOMS ANALYSIS ENGINE ---
+function analyzeSymptoms() {
+    const selectedSymptoms = Array.from(document.querySelectorAll('.symptom:checked')).map(s => s.value);
+    const reportDiv = document.getElementById('personal-report');
+    
+    if (selectedSymptoms.length === 0) {
+        reportDiv.innerHTML = "<p style='color: #e53e3e;'>Please select at least one symptom to analyze.</p>";
+        return;
+    }
+
+    let medicalContext = "";
+    
+    if (currentAQIValue > 150) {
+        medicalContext = `
+            <div style="background: #fff5f5; padding: 12px; border-radius: 8px; border-left: 4px solid #e53e3e; margin-top:10px;">
+                <strong>⚠️ Environmental Correlation:</strong> High AQI (${currentAQIValue}) is a likely trigger for your ${selectedSymptoms.join(', ')}. 
+            </div>
+        `;
+        
+        if (selectedSymptoms.includes("Chest Tightness") || selectedSymptoms.includes("Shortness of Breath")) {
+            medicalContext += `<p style="margin-top: 10px; color: #c53030; font-weight:bold;">🚨 URGENT: Chest symptoms during high pollution indicate heart/lung stress. Seek a clean-air environment immediately.</p>`;
+        }
+    } else {
+        medicalContext = `
+            <div style="background: #f0fdf4; padding: 12px; border-radius: 8px; border-left: 4px solid #22c55e; margin-top:10px;">
+                <strong>ℹ️ Analysis:</strong> Current outdoor AQI is low (${currentAQIValue}). If symptoms persist, consider indoor allergens or consult a professional.
+            </div>
+        `;
+    }
+
+    reportDiv.innerHTML = medicalContext + `<p style="margin-top: 10px; font-style: italic; font-size: 11px;">Note: This is an AI-generated correlation, not a medical diagnosis.</p>`;
+}
