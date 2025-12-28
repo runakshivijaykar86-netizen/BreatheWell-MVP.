@@ -152,3 +152,56 @@ function analyzeSymptoms() {
 
     reportDiv.innerHTML = medicalContext + `<p style="margin-top: 10px; font-style: italic; font-size: 11px;">Note: This is an AI-generated correlation, not a medical diagnosis.</p>`;
 }
+
+document.getElementById('downloadPdf').addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const city = document.getElementById('city').value;
+    const selectedSymptoms = Array.from(document.querySelectorAll('.symptom:checked')).map(s => s.value);
+    const med = getAdvice(currentAQIValue);
+
+    // --- PDF Header ---
+    doc.setFontSize(22);
+    doc.setTextColor(0, 120, 212); // BreatheWell Blue
+    doc.text("BreatheWell Health Report", 20, 20);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 20, 30);
+    doc.line(20, 35, 190, 35); // Horizontal line
+
+    // --- Section 1: Environmental Data ---
+    doc.setFontSize(16);
+    doc.setTextColor(0);
+    doc.text(`Location: ${city}`, 20, 50);
+    doc.text(`Air Quality Index (AQI): ${currentAQIValue}`, 20, 60);
+    doc.text(`Status: ${med.status}`, 20, 70);
+
+    // --- Section 2: Symptoms Analysis ---
+    doc.setFontSize(14);
+    doc.text("Reported Symptoms:", 20, 90);
+    doc.setFontSize(12);
+    const symptomsText = selectedSymptoms.length > 0 ? selectedSymptoms.join(", ") : "None reported.";
+    doc.text(symptomsText, 25, 100);
+
+    // --- Section 3: Medical Warning ---
+    doc.setFontSize(14);
+    doc.setTextColor(229, 62, 62); // Red for warnings
+    doc.text("Health Risk Advisory:", 20, 120);
+    doc.setFontSize(11);
+    doc.setTextColor(0);
+    const splitWarning = doc.splitTextToSize(`${med.now} ${med.future}`, 160);
+    doc.text(splitWarning, 20, 130);
+
+    // --- Footer ---
+    doc.setFontSize(10);
+    doc.setTextColor(150);
+    doc.text("Disclaimer: This report is for informational purposes and not a medical diagnosis.", 20, 280);
+
+    doc.save(`BreatheWell_Report_${city}.pdf`);
+});
+
+// Update UI to show the PDF button
+function showPdfButton() {
+    document.getElementById('downloadPdf').style.display = "block";
+}
