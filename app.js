@@ -67,24 +67,30 @@ function updateUI(data) {
 // --- 3. FETCHING DATA WITH SMART ERRORS ---
 async function search(c, s, co) {
     const resDiv = document.getElementById('result');
-    resDiv.innerHTML = "<p style='text-align:center;'>🩺 Analyzing Health Data...</p>";
+    resDiv.innerHTML = "<p style='text-align:center;'>🔍 Searching Global Database...</p>";
+    
+    // Ensure the key is correct and not expired
+    const url = `https://api.airvisual.com/v2/city?city=${encodeURIComponent(c)}&state=${encodeURIComponent(s)}&country=${encodeURIComponent(co)}&key=${API_KEY}`;
+    
     try {
-        const url = `https://api.airvisual.com/v2/city?city=${encodeURIComponent(c)}&state=${encodeURIComponent(s)}&country=${encodeURIComponent(co)}&key=${API_KEY}`;
         const res = await fetch(url);
         const data = await res.json();
         
         if (data.status === "success") {
             updateUI(data);
+            showPdfButton(); // Show the PDF button we built
         } else {
-            // THE FIX: Explain WHY it's not working
+            // Show the exact error from the backend
             resDiv.innerHTML = `
-                <div style="background:#fff5f5; color:#c53030; padding:15px; border-radius:10px; text-align:center; border:1px solid #feb2b2;">
-                    <strong>❌ City Not Found in Global Database</strong>
-                    <p style="font-size:12px; margin-top:5px; color:#718096;">Spelling must match the IQAir registry perfectly (e.g., "Delhi" State, "India" Country).</p>
-                    <p style="margin-top:10px; font-weight:bold;">💡 FIX: Please click the "GPS SYNC" button at the top for instant results!</p>
+                <div style="background:#fff5f5; color:#c53030; padding:15px; border-radius:10px; text-align:center;">
+                    <strong>Error: ${data.data.message}</strong>
+                    <p style="font-size:12px; margin-top:5px;">Check spelling or use the GPS button.</p>
                 </div>`;
         }
-    } catch (e) { resDiv.innerHTML = "❌ Connection Failed."; }
+    } catch (e) {
+        resDiv.innerHTML = "<p style='color:red; text-align:center;'>❌ Connection failed. Check your internet.</p>";
+        console.error("Fetch Error:", e);
+    }
 }
 
 document.getElementById('search-form').addEventListener('submit', (e) => {
@@ -214,3 +220,4 @@ if ('serviceWorker' in navigator) {
         });
     });
 }
+
