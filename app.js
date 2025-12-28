@@ -205,3 +205,12 @@ document.getElementById('downloadPdf').addEventListener('click', () => {
 function showPdfButton() {
     document.getElementById('downloadPdf').style.display = "block";
 }
+
+// --- FINAL PWA REGISTRATION ---
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/BreatheWell-MVP./sw.js').catch(() => {
+            console.log("Offline mode ready.");
+        });
+    });
+}
