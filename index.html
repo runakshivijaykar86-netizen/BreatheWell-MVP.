@@ -3,84 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:title" content="BreatheWell Pro | Your Air Health Advisor">
-<meta property="og:description" content="Check real-time air quality, track your medical symptoms, and download hazardous exposure reports.">
-<meta property="og:image" content="https://images.unsplash.com/photo-1580216643062-cf460548a66a?auto=format&fit=crop&w=1200&h=630"> <meta property="og:url" content="https://runakshivijaykar86-netizen.github.io/BreatheWell-MVP./">
-<meta property="og:type" content="website">
 
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="BreatheWell Pro">
-<meta name="twitter:description" content="Personalized medical advice based on your local air quality.">
-<meta name="twitter:image" content="https://images.unsplash.com/photo-1580216643062-cf460548a66a?auto=format&fit=crop&w=1200&h=630">
-    <title>BreatheWell Pro | Global Health Intelligence</title>
+    <!-- Open Graph / Social Preview (same as first file) -->
+    <meta property="og:title" content="BreatheWell Pro | Your Air Health Advisor">
+    <meta property="og:description" content="Check real-time air quality, track your medical symptoms, and download hazardous exposure reports.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1580216643062-cf460548a66a?auto=format&fit=crop&w=1200&h=630">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="BreatheWell Pro">
+    <meta name="twitter:description" content="Personalized medical advice based on your local air quality.">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1580216643062-cf460548a66a?auto=format&fit=crop&w=1200&h=630">
+
+    <title>BreatheWell Pro | Intelligence</title>
+
+    <!-- Same external dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Manifest -->
     <link rel="manifest" href="manifest.json">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f4f8; color: #1a202c; }
-        .navbar { background: #0078d4; color: white; padding: 15px 2rem; font-weight: bold; font-size: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .container { max-width: 600px; margin: 20px auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); }
-        
-        /* Search Interface */
-        .search-box { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        input { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; }
-        .btn-main { background: #0078d4; color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        .btn-gps { width: 100%; background: #2d3748; color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; margin-bottom: 20px; font-weight: 800; font-size: 16px; border: 2px solid #000; }
-        .hint { font-size: 12px; color: #718096; text-align: center; margin-bottom: 10px; }
 
-        /* Dashboard Result */
-        .med-card { border-radius: 12px; padding: 25px; border-left: 10px solid; margin-bottom: 20px; transition: all 0.5s ease; }
-        #emergency-zone { display: none; margin-top: 20px; }
-        .btn-emergency { width: 100%; background: #e53e3e; color: white; border: none; padding: 18px; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 18px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 70% { transform: scale(1.02); } 100% { transform: scale(1); } }
-        .chart-box { height: 250px; margin-top: 30px; }
-        .share-wa { display: none; background: #25D366; color: white; text-align: center; padding: 14px; border-radius: 10px; text-decoration: none; font-weight: bold; margin-top: 15px; }
-    </style>
+    <!-- Styles (kept from second file) -->
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    <nav class="navbar">BreatheWell Intelligence</nav>
-    <div class="container">
-    <p class="hint">💡 <strong>Tip:</strong> For best results, click the GPS button below!</p>
-    <button id="gps-btn" class="btn-gps">📍 ONE-CLICK GLOBAL GPS SYNC</button>
 
-    <form id="search-form" class="search-box">
-        <input type="text" id="city" placeholder="City (e.g., Mumbai)" required>
-        <input type="text" id="state" placeholder="State/Region (e.g., Maharashtra)" required>
-        <input type="text" id="country" placeholder="Country (e.g., India)" required>
-        <button type="submit" class="btn-main">Search Global Database</button>
-    </form>
-
-    <div id="result"></div>
-
-    <div id="symptoms-tracker" style="margin-top: 25px; padding: 20px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; display:none;">
-        <h4 style="margin-bottom: 10px; color: #2d3748;">🩺 Personal Symptoms Tracker</h4>
-        <p style="font-size: 12px; color: #718096; margin-bottom: 15px;">Check any symptoms you are currently feeling:</p>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
-            <label><input type="checkbox" class="symptom" value="Coughing"> Dry Cough</label>
-            <label><input type="checkbox" class="symptom" value="Headache"> Headache</label>
-            <label><input type="checkbox" class="symptom" value="Chest Tightness"> Chest Tightness</label>
-            <label><input type="checkbox" class="symptom" value="Eye Irritation"> Eye Irritation</label>
-            <label><input type="checkbox" class="symptom" value="Shortness of Breath"> Short Breath</label>
-            <label><input type="checkbox" class="symptom" value="Dizziness"> Dizziness</label>
-        </div>
-        
-        <button onclick="analyzeSymptoms()" class="btn-main" style="margin-top: 15px; background: #2d3748;">Generate Health Report</button>
-        <div id="personal-report" style="margin-top: 15px; font-size: 13px; line-height: 1.5;"></div>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
     </div>
 
-    <div id="emergency-zone"><button class="btn-emergency" onclick="triggerEmergencyAlert()">🆘 EMERGENCY PROTOCOL REQUIRED</button></div>
-    <a id="whatsappBtn" class="share-wa" target="_blank">📲 Share Alert on WhatsApp</a>
-        <button id="downloadPdf" class="btn-main" style="background: #4a5568; margin-top: 10px; display: none;">
-    📄 Download Medical PDF Report
-</button>
-    <div class="chart-box"><canvas id="aqiChart"></canvas></div>
-</div>
+    <nav class="navbar">
+        <div class="nav-content">
+            <span class="logo">BreatheWell<span>Pro</span></span>
+            <div class="status-badge">Live Intelligence</div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="hero-section">
+            <h1>Better Air, <span>Better Life.</span></h1>
+            <p>Advanced medical-grade air quality monitoring and symptom analysis at your fingertips.</p>
+        </div>
+
+        <div class="glass-card main-card">
+            <button id="gps-btn" class="btn-primary gps-pulse">
+                <span class="icon">📍</span> Sync Live Location
+            </button>
+
+            <div class="separator">
+                <span>or manual search</span>
+            </div>
+
+            <form id="search-form" class="search-grid">
+                <input type="text" id="city" placeholder="City" required>
+                <div class="input-row">
+                    <input type="text" id="state" placeholder="State" required>
+                    <input type="text" id="country" placeholder="Country" required>
+                </div>
+                <button type="submit" class="btn-secondary">Check Air Quality</button>
+            </form>
+        </div>
+
+        <div id="result" class="result-container"></div>
+
+        <section id="symptoms-tracker" class="glass-card tracker-section" style="display:none;">
+            <div class="section-header">
+                <h3>🩺 Symptom Analysis</h3>
+                <p>Select what you're feeling for a health report.</p>
+            </div>
+
+            <div class="symptom-toggles">
+                <label class="chip"><input type="checkbox" class="symptom" value="Coughing"><span>Dry Cough</span></label>
+                <label class="chip"><input type="checkbox" class="symptom" value="Headache"><span>Headache</span></label>
+                <label class="chip"><input type="checkbox" class="symptom" value="Chest Tightness"><span>Chest Tightness</span></label>
+                <label class="chip"><input type="checkbox" class="symptom" value="Eye Irritation"><span>Eye Irritation</span></label>
+                <label class="chip"><input type="checkbox" class="symptom" value="Shortness of Breath"><span>Short Breath</span></label>
+                <label class="chip"><input type="checkbox" class="symptom" value="Dizziness"><span>Dizziness</span></label>
+            </div>
+
+            <button onclick="analyzeSymptoms()" class="btn-action">Generate Medical Report</button>
+            <div id="personal-report" class="report-box"></div>
+        </section>
+
+        <div class="action-footer">
+            <div id="emergency-zone" style="display: none;">
+                <button class="btn-danger" onclick="triggerEmergencyAlert()">Emergency Protocol</button>
+            </div>
+            <a id="whatsappBtn" class="btn-whatsapp" style="display: none;" target="_blank">Share Report</a>
+            <button id="downloadPdf" class="btn-outline" style="display: none;">Download PDF</button>
+        </div>
+
+        <div class="chart-wrapper" id="chart-container" style="display: none;">
+            <canvas id="aqiChart"></canvas>
+        </div>
+    </main>
+
+    <!-- Same JS logic -->
     <script src="app.js"></script>
 </body>
 </html>
-
-
-
-
