@@ -56,6 +56,12 @@
             </div>
 
             <div id="symptom-section" class="card" style="display: none;">
+                <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+    <h4 class="med-label">🤖 AI CLINICAL TRIAGE (BETA)</h4>
+    <textarea id="ai-symptom-input" placeholder="Describe your feelings in detail (e.g., 'My chest is tight and I have a sharp headache')..." 
+        style="width: 100%; height: 80px; background: #334155; border: 1px solid var(--primary); border-radius: 12px; color: white; padding: 10px; font-size: 13px; margin-top: 10px;"></textarea>
+    <button id="ai-analyze-btn" class="btn btn-primary" style="margin-top: 10px; font-size: 11px;">AZURE AI ANALYSIS</button>
+</div>
                 <span class="label-sm">🩺 BIOLOGICAL CORRELATOR</span>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; margin-top: 10px;">
                     <label><input type="checkbox" class="symp" value="Dry Cough"> Dry Cough</label>
@@ -110,3 +116,4 @@
     <script src="app.js"></script>
 </body>
 </html>
+
