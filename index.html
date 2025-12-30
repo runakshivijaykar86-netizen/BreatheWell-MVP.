@@ -70,10 +70,16 @@
                             <div id="display-status" class="status-pill">STATUS</div>
                         </div>
                         <button id="downloadPdf" class="btn" style="background: #475569; width: auto; padding: 10px 20px; color: white;">📄 CLINICAL REPORT</button>
-                    </div>
-                    <span class="med-label">🚨 BIOLOGICAL IMPACT (ALVEOLAR BREACH)</span>
-                    <p id="display-now" style="font-size: 14px; margin-bottom: 20px; color: #cbd5e1;"></p>
-                </div>
+                   <div id="extended-advisory" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+    <span class="med-label">🚨 BIOLOGICAL MECHANISM</span>
+    <p id="display-biological" class="med-text" style="color: #cbd5e1; font-size: 14px; margin-bottom: 15px;"></p>
+    
+    <span class="med-label">⚠️ CLINICAL WARNINGS</span>
+    <p id="display-warnings" class="med-text" style="color: #fb7185; font-size: 14px; margin-bottom: 15px; font-weight: 500;"></p>
+    
+    <span class="med-label">🛡️ PROTECTIVE PROTOCOL</span>
+    <p id="display-precautions" class="med-text" style="color: white; font-size: 14px; font-weight: bold;"></p>
+</div>
                 <div id="map"></div>
             </div>
         </div>
@@ -81,3 +87,4 @@
     <script src="app.js"></script>
 </body>
 </html>
+
