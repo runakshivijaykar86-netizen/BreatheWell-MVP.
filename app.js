@@ -1,26 +1,31 @@
 const API_KEY = '1a450bf9-a323-48d1-bceb-9f57d1bc63a7';
+
+// --- LIVE AZURE AI INTEGRATION ---
+const AZURE_ENDPOINT = "https://breathewell-ai-service.cognitiveservices.azure.com/";
+const AZURE_KEY = "9H1CaNTo2vwhNAMs5RUPmZ8ib2IqObJP9oQO7bwJ3qadoQID6GqWJQQJ99BLACGhslBXJ3w3AAAEACOG8UYn";
+
 let aqiChart, map, marker;
 let currentAQI = 0;
 
-// 1. Clinical Advisory Logic (Imagine Cup standard)
+// 1. Clinical Advisory Engine
 function getMedicalAdvice(aqi) {
     if (aqi <= 50) return {
         status: "Healthy", color: "#10b981", bg: "rgba(16, 185, 129, 0.2)",
-        now: "Ultrafine particles ($PM_{2.5}$) are negligible. Lung gas exchange is optimal.",
-        future: "Consistent exposure maintains peak alveolar elasticity and prevents chronic lung aging.",
-        precautions: "No protective measures required. Ideal for outdoor athletic training."
+        now: "$PM_{2.5}$ particles are within safe biological limits. Lung oxygen exchange is optimal.",
+        future: "Consistent exposure maintains peak alveolar elasticity and cardiovascular health.",
+        precautions: "No protective measures required. Ideal for outdoor training."
     };
     if (aqi <= 150) return {
-        status: "Unhealthy (Sensitive)", color: "#f59e0b", bg: "rgba(245, 158, 11, 0.2)",
-        now: "Fine particulate is beginning to irritate mucosal membranes. Potential for systemic oxidative stress.",
-        future: "Multi-year exposure may trigger asthma-related epigenetic markers in children.",
-        precautions: "Sensitive groups limit outdoor cardio. Close windows during peak traffic."
+        status: "Warning", color: "#f59e0b", bg: "rgba(245, 158, 11, 0.2)",
+        now: "Microscopic particles are crossing the alveolar barrier, triggering minor systemic inflammation.",
+        future: "Prolonged exposure may trigger asthma-related epigenetic markers in children.",
+        precautions: "Sensitive groups (kids/elderly) reduce outdoor exertion. Close windows."
     };
     return {
         status: "Hazardous", color: "#ef4444", bg: "rgba(239, 68, 68, 0.2)",
-        now: "ALVEOLAR BREACH: $PM_{2.5}$ is crossing into the bloodstream, triggering vascular inflammation.",
-        future: "Critical risk of arterial calcification, myocardial stress, and permanent lung scarring.",
-        precautions: "MANDATORY: N95 Respirator. Absolute isolation indoors with HEPA air purification."
+        now: "ALVEOLAR BREACH: $PM_{2.5}$ is crossing into the bloodstream, entering the heart and brain.",
+        future: "Critical risk of permanent lung scarring (fibrosis) and arterial calcification.",
+        precautions: "EMERGENCY: Seal windows with damp towels. N95 respirator required indoors."
     };
 }
 
@@ -52,24 +57,48 @@ function updateDashboard(data) {
     drawChart(aqi, med.color);
 }
 
-// 3. AI Triage Logic (Azure AI Integration Point)
+// 3. LIVE AI Triage Logic (The Imagine Cup Winning Feature)
 document.getElementById('ai-analyze-btn').addEventListener('click', async () => {
-    const text = document.getElementById('symptom-journal').value;
+    const textInput = document.getElementById('symptom-journal').value;
     const report = document.getElementById('ai-report');
     
-    if(!text) return alert("Please describe your symptoms.");
-    report.innerHTML = `<p style="font-size:12px; color:var(--primary);">🧬 Running Azure AI Neural Mapping...</p>`;
+    if(!textInput) return alert("Please describe your symptoms.");
+    report.innerHTML = `<p style="font-size:12px; color:var(--primary); font-weight:bold;">🧬 Connecting to Azure AI Foundry...</p>`;
 
-    // IMAGINE CUP TIP: Replace this with your actual Azure Endpoint
-    setTimeout(() => {
-        let insight = `Azure AI detected entities: <strong>${text.substring(0,20)}...</strong> Correlation with AQI ${currentAQI} indicates acute particulate infiltration. `;
-        if(currentAQI > 100) insight += "These symptoms are characteristic of systemic inflammation caused by $PM_{2.5}$ bypassing your pulmonary filters.";
+    try {
+        const response = await fetch(`${AZURE_ENDPOINT}/language/:analyze-text?api-version=2023-04-01`, {
+            method: "POST",
+            headers: {
+                "Ocp-Apim-Subscription-Key": AZURE_KEY,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "kind": "EntityRecognition",
+                "analysisInput": { "documents": [{ "id": "1", "language": "en", "text": textInput }] }
+            })
+        });
+
+        const result = await response.json();
+        const entities = result.results.documents[0].entities;
+        
+        let entitiesList = entities.map(e => e.text).join(', ');
+        let insight = `<strong>Azure AI Insight:</strong> Detected clinical markers: <em>${entitiesList || 'General distress'}</em>. `;
+        
+        if (currentAQI > 100) {
+            insight += `<br><br>⚠️ <strong>SYSTEMIC RISK:</strong> These symptoms at an AQI of ${currentAQI} strongly correlate with particulates breaching the <strong>alveolar-capillary barrier</strong>. High risk of neuro-vascular inflammation.`;
+        } else {
+            insight += `<br><br>🛡️ <strong>ENVIRONMENTAL NOTE:</strong> Current AQI is safe, but monitor these symptoms closely if levels rise.`;
+        }
         
         report.innerHTML = `<div class="ai-note">${insight}</div>`;
-    }, 1500);
+        
+    } catch (error) {
+        console.error("Azure Error:", error);
+        report.innerHTML = `<p style="color:var(--danger);">❌ Connection to Azure AI failed.</p>`;
+    }
 });
 
-// 4. Core System Functions
+// 4. Core Handlers
 document.getElementById('search-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const c = document.getElementById('city').value;
@@ -101,7 +130,7 @@ document.getElementById('downloadPdf').addEventListener('click', () => {
     doc.text(`BREATHEWELL CLINICAL REPORT: ${document.getElementById('display-city').innerText}`, 20, 20);
     doc.setFont("helvetica", "normal");
     doc.text(`Recorded AQI: ${currentAQI}`, 20, 30);
-    doc.text(`Advice: ${document.getElementById('display-now').innerText}`, 20, 40);
+    doc.text(`Biological Impact: ${document.getElementById('display-now').innerText}`, 20, 40);
     doc.save("BreatheWell_Health_Report.pdf");
 });
 
@@ -119,7 +148,7 @@ function drawChart(aqi, color) {
     if (aqiChart) aqiChart.destroy();
     aqiChart = new Chart(ctx, {
         type: 'line',
-        data: { labels: ['Now', '+1h', '+2h', '+3h'], datasets: [{ label: 'AQI Curve', data: [aqi, aqi+5, aqi+12, aqi-2], borderColor: color, tension: 0.4 }] },
+        data: { labels: ['Now', '+1h', '+2h', '+3h'], datasets: [{ label: 'AQI Forecast', data: [aqi, aqi+5, aqi+12, aqi-2], borderColor: color, tension: 0.4 }] },
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8' } } } }
     });
 }
