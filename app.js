@@ -2,35 +2,35 @@ const API_KEY = '1a450bf9-a323-48d1-bceb-9f57d1bc63a7';
 let aqiChart, map, marker;
 let currentAQIValue = 0;
 
-// 1. ADVANCED MEDICAL ENGINE (2025 DATA)
+// 1. ADVANCED MEDICAL ENGINE (2025 RESEARCH)
 function getAdvice(aqi) {
     if (aqi <= 50) return {
         status: "Healthy", color: "#10b981", bg: "rgba(16, 185, 129, 0.2)",
-        now: "Fine particulate ($PM_{2.5}$) levels are negligible. Optimal oxygen saturation for cardiovascular health.",
-        future: "Consistent exposure maintains peak lung elasticity and lowers lifetime risk of Chronic Bronchitis.",
-        precautions: "No mask required. Ideal for intensive outdoor aerobic exercise."
+        now: "Ultrafine particles are within safe biological limits. Lung gas exchange is performing at 100% efficiency.",
+        future: "Supports peak lung development in children and prevents oxidative stress in vascular tissue.",
+        precautions: "Perfect for outdoor endurance activities. No mask required."
     };
-    if (aqi <= 100) return {
-        status: "Moderate", color: "#f59e0b", bg: "rgba(245, 158, 11, 0.2)",
-        now: "Fine dust may cause minor throat dryness. Reduced lung function in sensitive groups.",
-        future: "Slightly increased risk of developing seasonal allergies and asthma sensitivity in children.",
-        precautions: "Sensitive individuals should limit heavy outdoor exertion."
+    if (aqi <= 150) return {
+        status: "Warning", color: "#f59e0b", bg: "rgba(245, 158, 11, 0.2)",
+        now: "Minor irritation of mucosal membranes. Sensitive groups may experience a 5-10% drop in peak oxygen intake.",
+        future: "Prolonged exposure may trigger 'Epigenetic' markers for asthma and reduce long-term immunity.",
+        precautions: "Sensitive groups (kids/elderly) should limit heavy exercise. Maintain hydration."
     };
-    if (aqi <= 200) return {
-        status: "Unhealthy", color: "#ef4444", bg: "rgba(239, 68, 68, 0.2)",
-        now: "SYSTEMIC INFLAMMATION: Pollutants are crossing the blood-air barrier, triggering fatigue and coughing.",
-        future: "High risk of permanent lung scarring (fibrosis) and accelerated artery calcification.",
-        precautions: "N95 RESPIRATOR MANDATORY. Close all windows. Run indoor HEPA purifiers."
+    if (aqi <= 300) return {
+        status: "Danger", color: "#ef4444", bg: "rgba(239, 68, 68, 0.2)",
+        now: "SYSTEMIC INFLAMMATION: PM2.5 is entering the bloodstream, potentially causing heart palpitations and fatigue.",
+        future: "High risk of arterial calcification, heart failure, and permanent scarring of the alveolar walls.",
+        precautions: "MANDATORY: N95 Respirator. Close all windows. High-quality HEPA air purification required indoors."
     };
     return {
         status: "Hazardous", color: "#a855f7", bg: "rgba(168, 85, 247, 0.2)",
-        now: "CRITICAL STRESS: Toxic metals entering the blood are placing extreme pressure on the heart and brain.",
-        future: "Acute risk of Myocardial Infarction (Heart Attack) and Stroke. Long-term lung volume reduction.",
-        precautions: "EMERGENCY: Absolute isolation. Seal windows. Avoid physical exertion. Monitor heart rate."
+        now: "ACUTE VASCULAR STRESS: Toxic metals in the air are crossing the blood-brain barrier. Severe heart pressure.",
+        future: "Extreme risk of Stroke and Heart Attack. Potential for irreversible neurological inflammation.",
+        precautions: "EMERGENCY: Seal windows with wet towels. Avoid all physical movement. If chest pain occurs, seek medical help."
     };
 }
 
-// 2. UI & BUTTON LOGIC (FIXED)
+// 2. UI & SYMPTOM LOGIC (FIXED)
 function updateUI(data) {
     const aqi = data.data.current.pollution.aqius;
     const city = data.data.city;
@@ -58,7 +58,7 @@ function updateUI(data) {
     drawChart(aqi, med.color);
 }
 
-// Button Listeners (Professional Implementation)
+// 3. EVENT LISTENERS (Professional Implementation)
 document.getElementById('search-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const city = document.getElementById('city').value;
@@ -79,11 +79,18 @@ document.getElementById('gps-btn').addEventListener('click', () => {
 document.getElementById('analyze-btn').addEventListener('click', () => {
     const selected = Array.from(document.querySelectorAll('.symptom:checked')).map(s => s.value);
     const reportDiv = document.getElementById('personal-report');
-    if (selected.length === 0) { reportDiv.innerHTML = "❌ Select symptoms."; return; }
+    if (selected.length === 0) { reportDiv.innerHTML = "❌ Select symptoms above."; return; }
     
-    let report = `<div style="padding:12px; background:rgba(255,255,255,0.05); border-radius:10px; border-left:4px solid var(--primary);">`;
-    report += `Current AQI (${currentAQIValue}) correlates strongly with ${selected.join(', ')}. Fine particulate matter ($PM_{2.5}$) is currently entering your capillaries, triggering oxidative stress.</div>`;
-    reportDiv.innerHTML = report;
+    let analysis = `<div style="padding:12px; background:rgba(255,255,255,0.05); border-radius:10px; border-left:4px solid var(--primary);">`;
+    
+    // Advanced 2025 Symptom Mapping
+    if (selected.includes("Dizziness") || selected.includes("Brain Fog") || selected.includes("Heart Palpitations")) {
+        analysis += `<strong>⚠️ SYSTEMIC ALERT:</strong> Your ${selected.join(', ')} suggest pollutants have entered your circulatory system, causing systemic oxidative stress. `;
+    } else {
+        analysis += `<strong>💨 RESPIRATORY IMPACT:</strong> Current AQI is directly irritating your airways, leading to ${selected.join(', ')}. `;
+    }
+    analysis += "Stay indoors and use purified air.</div>";
+    reportDiv.innerHTML = analysis;
 });
 
 document.getElementById('nativeShareBtn').addEventListener('click', async () => {
@@ -105,11 +112,17 @@ document.getElementById('downloadPdf').addEventListener('click', () => {
     doc.save(`${city}_Report.pdf`);
 });
 
-// 3. HELPERS (HISTORY, MAP, CHART)
+document.getElementById('enable-notif').addEventListener('click', () => {
+    Notification.requestPermission().then(permission => {
+        if (permission === "granted") alert("🔔 Air Quality Alerts Enabled!");
+    });
+});
+
+// 4. HELPERS
 function saveToHistory(city, aqi) {
     let history = JSON.parse(localStorage.getItem('bw_history') || '[]');
     history = history.filter(item => item.city !== city);
-    history.unshift({ city, aqi, time: new Date().toLocaleTimeString() });
+    history.unshift({ city, aqi });
     localStorage.setItem('bw_history', JSON.stringify(history.slice(0, 5)));
     renderHistory();
 }
