@@ -1,16 +1,18 @@
 {
-  "name": "BreatheWell Pro Health",
+  "name": "BreatheWell Pro Intelligence",
   "short_name": "BreatheWell",
-  "description": "Global Air Quality & Health Advisor",
-  "start_url": "/BreatheWell-MVP./",
+  "description": "Clinical Air Quality & Respiratory Health Advisor",
+  "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0078d4",
+  "background_color": "#0f172a",
+  "theme_color": "#38bdf8",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/2877/2877696.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
