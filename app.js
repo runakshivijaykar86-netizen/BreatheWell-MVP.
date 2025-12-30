@@ -90,3 +90,4 @@ document.getElementById('search-form').addEventListener('submit', async (e) => {
     const data = await res.json();
     if(data.status === "success") updateDashboard(data);
 });
+
