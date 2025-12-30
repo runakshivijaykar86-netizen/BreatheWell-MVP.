@@ -9,10 +9,47 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // 1. ADVISORY LOGIC
     function getMedicalAdvice(aqi) {
-        if (aqi <= 50) return { status: "Healthy", color: "#10b981", now: "Pollutants are within safe limits. Alveolar gas exchange is 100% efficient." };
-        if (aqi <= 150) return { status: "Warning", color: "#f59e0b", now: "Particles are crossing the alveolar barrier, triggering minor systemic inflammation." };
-        return { status: "Hazardous", color: "#ef4444", now: "ACUTE VASCULAR STRESS: Particulates are crossing into the blood-air barrier, entering heart and brain tissue." };
-    }
+    if (aqi <= 50) return {
+        status: "Healthy", 
+        color: "#10b981", 
+        bg: "rgba(16, 185, 129, 0.2)",
+        biological: "Particulates ($PM_{2.5}$) are within safe biological limits. Alveolar gas exchange is performing at 100% efficiency.",
+        warnings: "No immediate cellular stress detected. Vascular tissue is protected.",
+        precautions: "No mask required. Ideal for intensive outdoor aerobic exercise and lung development."
+    };
+    if (aqi <= 100) return {
+        status: "Moderate", 
+        color: "#f59e0b", 
+        bg: "rgba(245, 158, 11, 0.2)",
+        biological: "Minor irritation of mucosal membranes. Sensitive groups may experience a slight drop in peak oxygen intake.",
+        warnings: "Long-term exposure at this level can trigger 'Epigenetic' markers for asthma in predisposed children.",
+        precautions: "Sensitive individuals should limit heavy exertion. Athletes: monitor for reduced recovery times."
+    };
+    if (aqi <= 150) return {
+        status: "Unhealthy (Sensitive)", 
+        color: "#f97316", 
+        bg: "rgba(249, 115, 22, 0.2)",
+        biological: "SYSTEMIC INFLAMMATION: Pollutants are beginning to cross the blood-air barrier, triggering vascular constriction.",
+        warnings: "Increased risk of heart palpitations and 'Brain Fog' due to neuro-vascular inflammation.",
+        precautions: "Sensitive groups: Wear N95 outdoors. Others: Avoid long runs or outdoor sports near traffic."
+    };
+    if (aqi <= 200) return {
+        status: "Unhealthy", 
+        color: "#ef4444", 
+        bg: "rgba(239, 68, 68, 0.2)",
+        biological: "ALVEOLAR BREACH: Toxic metals are entering the bloodstream. Alveolar-capillary barrier is under high oxidative stress.",
+        warnings: "High risk of permanent lung tissue scarring (fibrosis) and accelerated artery calcification.",
+        precautions: "N95 RESPIRATOR MANDATORY. Close all windows. Use HEPA-grade air purification inside."
+    };
+    return {
+        status: "Hazardous", 
+        color: "#a855f7", 
+        bg: "rgba(168, 85, 247, 0.2)",
+        biological: "ACUTE VASCULAR COLLAPSE: Toxic concentrations are crossing the blood-brain barrier. Critical cardiac pressure.",
+        warnings: "Extreme risk of Stroke or Myocardial Infarction. Irreversible neurological inflammation is possible.",
+        precautions: "EMERGENCY: Seal windows with damp towels. Avoid all physical movement. Monitor for chest pain."
+    };
+}
 
     // 2. DASHBOARD UPDATE
     function updateDashboard(data) {
@@ -135,3 +172,4 @@ document.addEventListener("DOMContentLoaded", () => {
         marker = L.circleMarker([lat, lon], { radius: 10, fillColor: "#38bdf8", color: "#fff", fillOpacity: 1 }).addTo(map);
     }
 });
+
