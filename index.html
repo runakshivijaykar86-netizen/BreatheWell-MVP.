@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BreatheWell Pro | Health Intelligence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BreatheWell Pro</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -12,208 +12,135 @@
     
     <style>
         :root {
-    --bg-dark: #0f172a;      /* Deep Midnight */
-    --card-bg: #1e293b;    /* Slate Blue */
-    --text-main: #f8fafc;  /* Soft White */
-    --primary: #38bdf8;    /* Neon Cyan */
-    --accent: #818cf8;     /* Indigo */
-    --border: rgba(255, 255, 255, 0.1);
-}
+            --bg: #0f172a;
+            --card: #1e293b;
+            --primary: #38bdf8;
+            --text: #f8fafc;
+            --accent: #818cf8;
+        }
 
-body { 
-    font-family: 'Inter', sans-serif; 
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    margin: 0;
-    line-height: 1.6;
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
 
-.navbar { 
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(10px);
-    padding: 1.5rem 10%; 
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
+        /* Mobile-First Layout */
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 15px; }
+        
+        .navbar { 
+            padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); 
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000;
+        }
+        .logo { font-size: 20px; font-weight: 800; color: var(--primary); letter-spacing: 1px; }
 
-.logo { 
-    font-size: 24px; 
-    font-weight: 800; 
-    color: var(--primary); 
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
+        .app-layout { display: flex; flex-direction: column; gap: 20px; }
 
-.app-grid { 
-    max-width: 1200px; 
-    margin: 40px auto; 
-    display: grid; 
-    grid-template-columns: 350px 1fr; 
-    gap: 30px; 
-    padding: 0 20px;
-}
+        /* Cards Styling */
+        .card { 
+            background: var(--card); border-radius: 20px; padding: 20px; 
+            border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
 
-/* Sophisticated Dark Cards */
-.card { 
-    background: var(--card-bg); 
-    padding: 30px; 
-    border-radius: 24px; 
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    border: 1px solid var(--border);
-}
+        /* Inputs for Mobile */
+        .search-group { display: flex; flex-direction: column; gap: 10px; }
+        input { 
+            background: #334155; border: none; padding: 15px; border-radius: 12px; 
+            color: white; font-size: 16px; width: 100%;
+        }
+        
+        .btn { 
+            padding: 15px; border-radius: 12px; border: none; font-weight: 700; 
+            cursor: pointer; transition: 0.2s; font-size: 14px; width: 100%;
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; margin-top: 10px; }
+        .btn-gps { background: #334155; color: var(--primary); border: 1px solid var(--primary); margin-bottom: 10px; }
 
-input { 
-    background: #334155;
-    border: 1px solid var(--border);
-    color: white;
-    padding: 14px; 
-    border-radius: 12px; 
-    width: 100%;
-    margin-bottom: 12px;
-    font-size: 15px;
-}
+        /* Result Section */
+        .aqi-display { text-align: center; padding: 20px 0; }
+        .aqi-num { font-size: 72px; font-weight: 900; line-height: 1; margin: 10px 0; }
+        .status-pill { display: inline-block; padding: 6px 20px; border-radius: 50px; font-weight: 800; font-size: 14px; }
 
-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
-}
+        /* Dashboard Grid */
+        .data-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
+        #map { height: 250px; border-radius: 15px; margin-top: 15px; filter: invert(100%) hue-rotate(180deg) brightness(95%); }
+        .chart-box { height: 250px; width: 100%; }
 
-.btn { 
-    padding: 16px; 
-    border-radius: 12px; 
-    border: none; 
-    font-weight: 700; 
-    cursor: pointer; 
-    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+        /* Desktop Adjustments */
+        @media (min-width: 768px) {
+            .app-layout { grid-template-columns: 350px 1fr; display: grid; align-items: start; }
+            .data-grid { grid-template-columns: 1fr 1fr; }
+            .container { padding: 30px; }
+        }
 
-.btn-primary { 
-    background: linear-gradient(135deg, var(--primary), var(--accent)); 
-    color: white; 
-}
-
-.btn-primary:hover { 
-    transform: translateY(-3px); 
-    box-shadow: 0 10px 20px rgba(56, 189, 248, 0.4); 
-}
-
-.aqi-badge { 
-    font-size: 64px; 
-    font-weight: 900; 
-    margin: 20px 0;
-    background: linear-gradient(to right, #fff, var(--primary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.status-pill {
-    padding: 8px 20px;
-    border-radius: 50px;
-    font-size: 14px;
-    font-weight: 800;
-    background: rgba(255,255,255,0.05);
-}
-
-/* Map & Chart Dark Mode Styling */
-#map { 
-    height: 300px; 
-    border-radius: 20px; 
-    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); 
-}
-
-#aqiChart {
-    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.2));
-}
-
-@media (max-width: 1000px) {
-    .app-grid { grid-template-columns: 1fr; }
-}
+        #emergency-banner { 
+            display: none; background: #ef4444; color: white; padding: 15px; 
+            border-radius: 12px; text-align: center; font-weight: 800; margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
-
-    <nav class="navbar">
-        <div class="logo">BreatheWell <span style="font-weight: 300; opacity: 0.6;">PRO</span></div>
-        <div id="date-display" style="font-size: 14px; font-weight: 600; opacity: 0.5;"></div>
-    </nav>
-
-    <div class="app-grid">
-        <div class="sidebar">
-            <button id="gps-btn" class="btn btn-gps">📍 Auto-Sync Location</button>
-            <div class="card">
-                <h3 style="margin-bottom: 15px;">Global Search</h3>
-                <form id="search-form" class="search-section">
-                    <input type="text" id="city" placeholder="City" required>
-                    <input type="text" id="state" placeholder="State/Region" required>
-                    <input type="text" id="country" placeholder="Country" required>
-                    <button type="submit" class="btn btn-primary">Analyze Health Risk</button>
-                </form>
-            </div>
-            
-            <div id="symptoms-tracker" class="card" style="margin-top: 20px; display:none;">
-                <h3>🩺 Symptom Analysis</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
-                    <label style="font-size: 13px;"><input type="checkbox" class="symptom" value="Coughing"> Coughing</label>
-                    <label style="font-size: 13px;"><input type="checkbox" class="symptom" value="Headache"> Headache</label>
-                    <label style="font-size: 13px;"><input type="checkbox" class="symptom" value="Fatigue"> Fatigue</label>
-                    <label style="font-size: 13px;"><input type="checkbox" class="symptom" value="Wheezing"> Wheezing</label>
+    <nav class="navbar"><div class="logo">BREATHEWELL PRO</div></nav>
+    
+    <div class="container">
+        <div id="emergency-banner" onclick="triggerEmergencyAlert()">🆘 HAZARDOUS AIR: CLICK FOR MEDICAL PROTOCOL</div>
+        
+        <div class="app-layout">
+            <div class="sidebar">
+                <button id="gps-btn" class="btn btn-gps">📍 Use Current GPS Location</button>
+                <div class="card">
+                    <form id="search-form" class="search-group">
+                        <input type="text" id="city" placeholder="Enter City">
+                        <input type="text" id="state" placeholder="Enter State">
+                        <input type="text" id="country" placeholder="Enter Country">
+                        <button type="submit" class="btn btn-primary">ANALYZE AIR HEALTH</button>
+                    </form>
                 </div>
-                <button onclick="analyzeSymptoms()" class="btn btn-primary" style="width: 100%; background: var(--dark);">Verify Correlation</button>
-                <div id="personal-report" style="margin-top: 15px; font-size: 13px; color: #64748b;"></div>
-            </div>
-        </div>
 
-        <div class="dashboard">
-            <div id="result-placeholder" class="card" style="text-align:center; padding: 100px 20px;">
-                <p style="opacity: 0.5;">Enter a city or use GPS to generate a Medical Health Assessment.</p>
+                <div id="tracker-card" class="card" style="margin-top:20px; display:none;">
+                    <h4 style="margin-bottom:15px; font-size:14px; color:var(--primary)">🩺 SYMPTOMS CHECKLIST</h4>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
+                        <label><input type="checkbox" class="symptom" value="Cough"> Cough</label>
+                        <label><input type="checkbox" class="symptom" value="Headache"> Headache</label>
+                        <label><input type="checkbox" class="symptom" value="Fatigue"> Fatigue</label>
+                        <label><input type="checkbox" class="symptom" value="Tightness"> Chest Tight</label>
+                    </div>
+                    <button onclick="analyzeSymptoms()" class="btn btn-primary" style="background:#334155; margin-top:15px;">GET CORRELATION</button>
+                    <div id="personal-report" style="margin-top:15px; font-size:12px; opacity:0.8;"></div>
+                </div>
             </div>
 
-            <div id="main-content" style="display: none;">
-                <div class="card" id="risk-card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div>
-                            <h2 id="display-city" style="font-size: 28px;">City Name</h2>
-                            <div class="aqi-badge" id="display-aqi">00</div>
-                            <div id="display-status" class="status-pill">Healthy</div>
+            <div class="dashboard">
+                <div id="main-content" style="display:none;">
+                    <div class="card">
+                        <div class="aqi-display">
+                            <h2 id="display-city">City Name</h2>
+                            <div class="aqi-num" id="display-aqi">--</div>
+                            <div id="display-status" class="status-pill">STATUS</div>
                         </div>
-                        <div style="text-align: right;">
-                            <button id="downloadPdf" class="btn" style="background: #e2e8f0; color: var(--dark); margin-bottom: 10px;">📄 PDF Report</button>
-                            <a id="whatsappBtn" class="btn" style="background: #25D366; color: white;" target="_blank">📲 Share</a>
+                        <div class="data-grid">
+                            <div>
+                                <small style="color:var(--primary); font-weight:bold;">SHORT TERM</small>
+                                <p id="display-now" style="font-size:14px; margin-top:5px;"></p>
+                            </div>
+                            <div>
+                                <small style="color:var(--primary); font-weight:bold;">CHRONIC RISK</small>
+                                <p id="display-future" style="font-size:14px; margin-top:5px;"></p>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-top:20px;">
+                            <button id="downloadPdf" class="btn" style="background:#475569; color:white;">📄 PDF</button>
+                            <a id="whatsappBtn" class="btn" style="background:#22c55e; color:white; text-decoration:none; text-align:center;">📲 SHARE</a>
                         </div>
                     </div>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #e2e8f0;">
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div>
-                            <strong style="font-size: 12px; text-transform: uppercase; color: var(--primary);">🚨 Symptoms Now</strong>
-                            <p id="display-now" style="font-size: 14px; margin-top: 5px;"></p>
-                        </div>
-                        <div>
-                            <strong style="font-size: 12px; text-transform: uppercase; color: var(--primary);">⏳ Future Risk</strong>
-                            <p id="display-future" style="font-size: 14px; margin-top: 5px;"></p>
-                        </div>
-                    </div>
-                </div>
 
-                <div id="emergency-zone" style="margin-top: 20px;">
-                    <div class="emergency-banner" onclick="triggerEmergencyAlert()">🆘 CRITICAL AIR ALERT: VIEW MEDICAL PROTOCOL</div>
-                </div>
-
-                <div class="chart-map-container">
-                    <div class="card"><canvas id="aqiChart"></canvas></div>
                     <div id="map"></div>
+                    <div class="card" style="margin-top:20px;"><div class="chart-box"><canvas id="aqiChart"></canvas></div></div>
+                </div>
+
+                <div id="placeholder" class="card" style="text-align:center; padding:60px 20px; opacity:0.5;">
+                    🔍 Waiting for Location Data...
                 </div>
             </div>
         </div>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>
-
