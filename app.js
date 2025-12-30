@@ -1,52 +1,56 @@
 const API_KEY = '1a450bf9-a323-48d1-bceb-9f57d1bc63a7';
 let aqiChart, map, marker;
-let currentAQIValue = 0;
+let currentAQI = 0;
 
-// 1. ADVANCED MEDICAL ENGINE (2025 RESEARCH)
-function getAdvice(aqi) {
+// 1. ADVANCED CLINICAL ADVISORY ENGINE
+function getMedicalAdvice(aqi) {
     if (aqi <= 50) return {
         status: "Healthy", color: "#10b981", bg: "rgba(16, 185, 129, 0.2)",
-        now: "Ultrafine particles are within safe biological limits. Lung gas exchange is performing at 100% efficiency.",
-        future: "Supports peak lung development in children and prevents oxidative stress in vascular tissue.",
-        precautions: "Perfect for outdoor endurance activities. No mask required."
+        now: "Ultrafine particles ($PM_{2.5}$) are within safe biological limits. Alveolar gas exchange is performing at 100% efficiency.",
+        future: "Supports peak lung development and prevents oxidative stress in vascular tissue.",
+        precautions: "No mask required. Ideal for intensive outdoor aerobic exercise."
     };
-    if (aqi <= 150) return {
-        status: "Warning", color: "#f59e0b", bg: "rgba(245, 158, 11, 0.2)",
-        now: "Minor irritation of mucosal membranes. Sensitive groups may experience a 5-10% drop in peak oxygen intake.",
-        future: "Prolonged exposure may trigger 'Epigenetic' markers for asthma and reduce long-term immunity.",
-        precautions: "Sensitive groups (kids/elderly) should limit heavy exercise. Maintain hydration."
+    if (aqi <= 100) return {
+        status: "Moderate", color: "#f59e0b", bg: "rgba(245, 158, 11, 0.2)",
+        now: "Possible minor irritation of mucosal membranes. Sensitive groups may experience a slight drop in peak oxygen intake.",
+        future: "Prolonged exposure may trigger 'Epigenetic' markers for asthma in predisposed children.",
+        precautions: "Sensitive individuals should limit heavy outdoor exertion."
     };
-    if (aqi <= 300) return {
-        status: "Danger", color: "#ef4444", bg: "rgba(239, 68, 68, 0.2)",
-        now: "SYSTEMIC INFLAMMATION: PM2.5 is entering the bloodstream, potentially causing heart palpitations and fatigue.",
-        future: "High risk of arterial calcification, heart failure, and permanent scarring of the alveolar walls.",
-        precautions: "MANDATORY: N95 Respirator. Close all windows. High-quality HEPA air purification required indoors."
+    if (aqi <= 200) return {
+        status: "Unhealthy", color: "#ef4444", bg: "rgba(239, 68, 68, 0.2)",
+        now: "SYSTEMIC INFLAMMATION: Pollutants are crossing the blood-air barrier, triggering fatigue and vascular constriction.",
+        future: "High risk of permanent lung tissue scarring (fibrosis) and accelerated artery calcification.",
+        precautions: "N95 RESPIRATOR MANDATORY. Close all windows. Use HEPA air purification."
     };
     return {
         status: "Hazardous", color: "#a855f7", bg: "rgba(168, 85, 247, 0.2)",
-        now: "ACUTE VASCULAR STRESS: Toxic metals in the air are crossing the blood-brain barrier. Severe heart pressure.",
-        future: "Extreme risk of Stroke and Heart Attack. Potential for irreversible neurological inflammation.",
-        precautions: "EMERGENCY: Seal windows with wet towels. Avoid all physical movement. If chest pain occurs, seek medical help."
+        now: "ACUTE VASCULAR STRESS: Toxic metals in the air are crossing the blood-brain barrier. Critical heart pressure.",
+        future: "Extreme risk of Stroke and Myocardial Infarction. Potential for irreversible neurological inflammation.",
+        precautions: "EMERGENCY: Seal windows. Avoid all movement. Monitor for chest pain."
     };
 }
 
-// 2. UI & SYMPTOM LOGIC (FIXED)
-function updateUI(data) {
+// 2. THE UI UPDATER
+function updateDashboard(data) {
     const aqi = data.data.current.pollution.aqius;
     const city = data.data.city;
-    const med = getAdvice(aqi);
-    currentAQIValue = aqi;
+    const med = getMedicalAdvice(aqi);
+    currentAQI = aqi;
 
+    // Reveal UI
     document.getElementById('placeholder').style.display = 'none';
-    document.getElementById('main-content').style.display = 'block';
-    document.getElementById('symptom-card').style.display = 'block';
+    document.getElementById('dashboard-content').style.display = 'block';
+    document.getElementById('symptom-section').style.display = 'block';
     
+    // Update Text
     document.getElementById('display-city').innerText = city;
     document.getElementById('display-aqi').innerText = aqi;
-    const statusPill = document.getElementById('display-status');
-    statusPill.innerText = med.status;
-    statusPill.style.backgroundColor = med.bg;
-    statusPill.style.color = med.color;
+    document.getElementById('display-aqi').style.color = med.color;
+    
+    const pill = document.getElementById('display-status');
+    pill.innerText = med.status;
+    pill.style.backgroundColor = med.bg;
+    pill.style.color = med.color;
     
     document.getElementById('display-now').innerText = med.now;
     document.getElementById('display-future').innerText = med.future;
@@ -58,13 +62,20 @@ function updateUI(data) {
     drawChart(aqi, med.color);
 }
 
-// 3. EVENT LISTENERS (Professional Implementation)
+// 3. EVENT LISTENERS (FIXED BUTTONS)
 document.getElementById('search-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const city = document.getElementById('city').value;
-    const state = document.getElementById('state').value;
-    const country = document.getElementById('country').value;
-    search(city, state, country);
+    const c = document.getElementById('city').value;
+    const s = document.getElementById('state').value;
+    const co = document.getElementById('country').value;
+    
+    const url = `https://api.airvisual.com/v2/city?city=${encodeURIComponent(c)}&state=${encodeURIComponent(s)}&country=${encodeURIComponent(co)}&key=${API_KEY}`;
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.status === "success") updateDashboard(data);
+        else alert("Location not found.");
+    } catch (err) { alert("API Error."); }
 });
 
 document.getElementById('gps-btn').addEventListener('click', () => {
@@ -72,31 +83,31 @@ document.getElementById('gps-btn').addEventListener('click', () => {
         const url = `https://api.airvisual.com/v2/nearest_city?lat=${p.coords.latitude}&lon=${p.coords.longitude}&key=${API_KEY}`;
         const res = await fetch(url);
         const data = await res.json();
-        if (data.status === "success") updateUI(data);
+        if (data.status === "success") updateDashboard(data);
     });
 });
 
 document.getElementById('analyze-btn').addEventListener('click', () => {
-    const selected = Array.from(document.querySelectorAll('.symptom:checked')).map(s => s.value);
+    const selected = Array.from(document.querySelectorAll('.symp:checked')).map(s => s.value);
     const reportDiv = document.getElementById('personal-report');
-    if (selected.length === 0) { reportDiv.innerHTML = "❌ Select symptoms above."; return; }
+    if (selected.length === 0) { reportDiv.innerHTML = "❌ Select symptoms."; return; }
     
     let analysis = `<div style="padding:12px; background:rgba(255,255,255,0.05); border-radius:10px; border-left:4px solid var(--primary);">`;
     
-    // Advanced 2025 Symptom Mapping
-    if (selected.includes("Dizziness") || selected.includes("Brain Fog") || selected.includes("Heart Palpitations")) {
-        analysis += `<strong>⚠️ SYSTEMIC ALERT:</strong> Your ${selected.join(', ')} suggest pollutants have entered your circulatory system, causing systemic oxidative stress. `;
+    // Advanced Medical Correlation Logic
+    if (selected.includes("Brain Fog") || selected.includes("Palpitations")) {
+        analysis += `<strong>⚠️ SYSTEMIC ALERT:</strong> Your ${selected.join(', ')} suggest pollutants have crossed the alveolar barrier into your bloodstream, causing neuro-vascular inflammation. `;
     } else {
-        analysis += `<strong>💨 RESPIRATORY IMPACT:</strong> Current AQI is directly irritating your airways, leading to ${selected.join(', ')}. `;
+        analysis += `<strong>💨 RESPIRATORY IMPACT:</strong> Current AQI is irritating your upper airways, causing ${selected.join(', ')}. `;
     }
-    analysis += "Stay indoors and use purified air.</div>";
+    analysis += "Use HEPA filtration immediately.</div>";
     reportDiv.innerHTML = analysis;
 });
 
-document.getElementById('nativeShareBtn').addEventListener('click', async () => {
+document.getElementById('shareBtn').addEventListener('click', async () => {
     const shareData = {
-        title: 'BreatheWell Health Alert',
-        text: `📍 ${document.getElementById('display-city').innerText}\n💨 AQI: ${currentAQIValue}\n🛡️ ${document.getElementById('display-precautions').innerText}`,
+        title: 'BreatheWell Pro Alert',
+        text: `📍 ${document.getElementById('display-city').innerText}\n💨 AQI: ${currentAQI}\n🛡️ ${document.getElementById('display-precautions').innerText}`,
         url: window.location.href
     };
     if (navigator.share) await navigator.share(shareData);
@@ -107,21 +118,15 @@ document.getElementById('downloadPdf').addEventListener('click', () => {
     const doc = new jsPDF();
     const city = document.getElementById('display-city').innerText;
     doc.text(`BreatheWell Health Report: ${city}`, 20, 20);
-    doc.text(`AQI Level: ${currentAQIValue}`, 20, 30);
-    doc.text(`Medical Advice: ${document.getElementById('display-now').innerText}`, 20, 40);
+    doc.text(`AQI Level: ${currentAQI}`, 20, 30);
+    doc.text(`Biological Impact: ${document.getElementById('display-now').innerText}`, 20, 40);
     doc.save(`${city}_Report.pdf`);
-});
-
-document.getElementById('enable-notif').addEventListener('click', () => {
-    Notification.requestPermission().then(permission => {
-        if (permission === "granted") alert("🔔 Air Quality Alerts Enabled!");
-    });
 });
 
 // 4. HELPERS
 function saveToHistory(city, aqi) {
     let history = JSON.parse(localStorage.getItem('bw_history') || '[]');
-    history = history.filter(item => item.city !== city);
+    history = history.filter(h => h.city !== city);
     history.unshift({ city, aqi });
     localStorage.setItem('bw_history', JSON.stringify(history.slice(0, 5)));
     renderHistory();
@@ -130,8 +135,8 @@ function saveToHistory(city, aqi) {
 function renderHistory() {
     const history = JSON.parse(localStorage.getItem('bw_history') || '[]');
     const list = document.getElementById('history-list');
-    document.getElementById('history-card').style.display = history.length ? 'block' : 'none';
-    list.innerHTML = history.map(h => `<div class="history-item"><span>${h.city}</span><b>${h.aqi} AQI</b></div>`).join('');
+    document.getElementById('history-section').style.display = history.length ? 'block' : 'none';
+    list.innerHTML = history.map(h => `<div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px;">${h.city}: <b>${h.aqi} AQI</b></div>`).join('');
 }
 
 function updateMap(lat, lon, aqi) {
@@ -148,16 +153,9 @@ function drawChart(aqi, color) {
     if (aqiChart) aqiChart.destroy();
     aqiChart = new Chart(ctx, {
         type: 'line',
-        data: { labels: ['Now', '+1h', '+2h', '+3h'], datasets: [{ label: 'AQI Forecast', data: [aqi, aqi+4, aqi+8, aqi-2], borderColor: color, tension: 0.4 }] },
+        data: { labels: ['Now', '+1h', '+2h', '+3h'], datasets: [{ label: 'AQI Forecast', data: [aqi, aqi+4, aqi+9, aqi-2], borderColor: color, tension: 0.4 }] },
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8' } } } }
     });
-}
-
-async function search(c, s, co) {
-    const url = `https://api.airvisual.com/v2/city?city=${encodeURIComponent(c)}&state=${encodeURIComponent(s)}&country=${encodeURIComponent(co)}&key=${API_KEY}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.status === "success") updateUI(data); else alert("Location not found.");
 }
 
 window.onload = renderHistory;
