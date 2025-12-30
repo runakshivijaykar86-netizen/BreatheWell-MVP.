@@ -153,3 +153,4 @@ document.getElementById('downloadPdf').addEventListener('click', () => {
     
     doc.setFontSize
 
+}
