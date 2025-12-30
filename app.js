@@ -53,27 +53,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 2. DASHBOARD UPDATE
     function updateDashboard(data) {
-        const aqi = data.data.current.pollution.aqius;
-        const med = getMedicalAdvice(aqi);
-        currentAQI = aqi;
+    const aqi = data.data.current.pollution.aqius;
+    const med = getMedicalAdvice(aqi);
 
-        document.getElementById('placeholder').style.display = 'none';
-        document.getElementById('dashboard-content').style.display = 'block';
-        document.getElementById('ai-triage-card').style.display = 'block';
-        document.getElementById('route-card').style.display = 'block';
-        
-        document.getElementById('display-city').innerText = data.data.city;
-        document.getElementById('display-aqi').innerText = aqi;
-        document.getElementById('display-aqi').style.color = med.color;
-        document.getElementById('display-now').innerText = med.now;
-        
-        const pill = document.getElementById('display-status');
-        pill.innerText = med.status; 
-        pill.style.color = med.color; 
-        pill.style.background = `rgba(255,255,255,0.1)`;
+    // Reveal UI
+    document.getElementById('placeholder').style.display = 'none';
+    document.getElementById('dashboard-content').style.display = 'block';
 
-        updateMap(data.data.location.coordinates[1], data.data.location.coordinates[0]);
-    }
+    // Update Text
+    document.getElementById('display-biological').innerText = med.biological;
+    document.getElementById('display-warnings').innerText = med.warnings;
+    document.getElementById('display-precautions').innerText = med.precautions;
+    
+    // Status Pill
+    const pill = document.getElementById('display-status');
+    pill.innerText = med.status;
+    pill.style.color = med.color;
+    pill.style.backgroundColor = med.bg;
+}
 
     // 3. BUTTON: GREEN ROUTE PLANNER
     const routeBtn = document.getElementById('plan-route-btn');
@@ -172,4 +169,5 @@ document.addEventListener("DOMContentLoaded", () => {
         marker = L.circleMarker([lat, lon], { radius: 10, fillColor: "#38bdf8", color: "#fff", fillOpacity: 1 }).addTo(map);
     }
 });
+
 
