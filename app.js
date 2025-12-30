@@ -7,12 +7,39 @@ document.getElementById('date-display').innerText = new Date().toDateString();
 
 // 2. Medical Advisory Engine
 function getAdvice(aqi) {
-    if (aqi <= 50) return { status: "Healthy", color: "#10b981", bg: "#ecfdf5", now: "Optimal oxygen levels. No acute symptoms.", future: "Supports healthy heart and lung aging.", precautions: "No mask needed." };
-    if (aqi <= 100) return { status: "Moderate", color: "#f59e0b", bg: "#fffbeb", now: "Possible minor throat irritation for some.", future: "Low chronic impact if exposure is limited.", precautions: "Sensitive groups limit outdoor cardio." };
-    if (aqi <= 200) return { status: "Unhealthy", color: "#ef4444", bg: "#fef2f2", now: "Systemic inflammation, fatigue, coughing.", future: "High risk of Chronic Bronchitis / COPD.", precautions: "N95 Respirator Required Outdoors." };
-    return { status: "Hazardous", color: "#7c3aed", bg: "#f5f3ff", now: "Severe cardiovascular and lung stress.", future: "Significant risk of Stroke and Heart Attack.", precautions: "STAY INDOORS. Seal all windows." };
+    if (aqi <= 50) return { 
+        status: "Healthy", 
+        color: "#22c55e", // Neon Green
+        bg: "rgba(34, 197, 94, 0.1)", 
+        now: "Optimal oxygen levels.", 
+        future: "Supports healthy heart aging.", 
+        precautions: "No mask needed." 
+    };
+    if (aqi <= 100) return { 
+        status: "Moderate", 
+        color: "#f59e0b", // Amber
+        bg: "rgba(245, 158, 11, 0.1)", 
+        now: "Possible minor throat irritation.", 
+        future: "Low chronic impact.", 
+        precautions: "Sensitive groups limit cardio." 
+    };
+    if (aqi <= 200) return { 
+        status: "Unhealthy", 
+        color: "#ef4444", // Bright Red
+        bg: "rgba(239, 68, 68, 0.1)", 
+        now: "Systemic inflammation and fatigue.", 
+        future: "High risk of Chronic Bronchitis.", 
+        precautions: "N95 Respirator Required." 
+    };
+    return { 
+        status: "Hazardous", 
+        color: "#a855f7", // Electric Purple
+        bg: "rgba(168, 85, 247, 0.1)", 
+        now: "Severe heart and lung stress.", 
+        future: "Significant Stroke/Heart Attack risk.", 
+        precautions: "STAY INDOORS. Seal windows." 
+    };
 }
-
 // 3. UI Updater
 function updateUI(data) {
     const aqi = data.data.current.pollution.aqius;
@@ -125,3 +152,4 @@ document.getElementById('downloadPdf').addEventListener('click', () => {
     doc.text("BreatheWell Health Report", 20, 20);
     
     doc.setFontSize
+
