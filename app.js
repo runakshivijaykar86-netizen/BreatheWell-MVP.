@@ -160,3 +160,20 @@ function drawChart(aqi, color) {
         }
     });
 }
+// --- PWA INSTALLATION ENGINE ---
+let deferredPrompt;
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('Service Worker Registered'))
+      .catch(err => console.log('Service Worker Failed', err));
+  });
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // You could show a custom "Install App" button here if you want
+  console.log('App is ready to be installed');
+});
