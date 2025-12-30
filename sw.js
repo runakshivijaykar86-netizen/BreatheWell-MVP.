@@ -1,22 +1,27 @@
-// sw.js - Service Worker for BreatheWell
-const CACHE_NAME = 'breathewell-v1';
-const ASSETS = [
-  './',
-  './index.html',
-  './app.js',
-  './manifest.json'
+const CACHE_NAME = 'breathewell-v2';
+const assets = [
+  '/',
+  '/index.html',
+  '/app.js',
+  'https://cdn.jsdelivr.net/npm/chart.js',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
 ];
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+// Install Service Worker
+self.addEventListener('install', evt => {
+  evt.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      cache.addAll(assets);
+    })
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+// Fetch Assets
+self.addEventListener('fetch', evt => {
+  evt.respondWith(
+    caches.match(evt.request).then(rec => {
+      return rec || fetch(evt.request);
     })
   );
 });
